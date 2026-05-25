@@ -47,14 +47,14 @@
         .nav button { border: 0; background: transparent; color: #6b7e8d; font-weight: 800; font-size: 11px; cursor: pointer; }
         .nav button.active { color: #1677bd; }
         
-        /* Contenedor del Buscador */
-        .search-container { position: relative; width: 100%; margin-bottom: 8px; }
-        .suggestions-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #dceaf4; border-radius: 10px; z-index: 1000; max-height: 180px; overflow-y: auto; display: none; box-shadow: 0 4px 12px #0002; }
-        .suggestion-item { padding: 11px 14px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f0f6fa; text-align: left; color: #12324d; }
-        .suggestion-item:hover { background: #f0f8ff; }
+        /* Buscador Avanzado de Comunas */
+        .search-container { position: relative; width: 100%; margin-bottom: 8px; z-index: 999; }
+        .suggestions-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #1677bd; border-radius: 14px; max-height: 200px; overflow-y: auto; display: none; box-shadow: 0 8px 24px #0002; z-index: 9999; }
+        .suggestion-item { padding: 12px 16px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f6fa; text-align: left; color: #15324a; font-weight: 600; }
+        .suggestion-item:hover { background: #e9f3fb; color: #1677bd; }
 
-        .mapContainer { position: relative; margin: 10px 0; border-radius: 24px; overflow: hidden; border: 1px solid #d8e9f2; }
-        #mapReal { height: 260px; width: 100%; z-index: 1; }
+        .mapContainer { position: relative; margin: 10px 0; border-radius: 24px; overflow: hidden; border: 1px solid #d8e9f2; z-index: 5; }
+        #mapReal { height: 260px; width: 100%; }
         
         .place, .room, .extra-item, .review-item { border: 1px solid #dceaf4; border-radius: 18px; padding: 14px; margin: 10px 0; background: white; cursor: pointer; }
         .review-item { cursor: default; background: #fafcfe; }
@@ -76,7 +76,6 @@
         .modal.show { display: flex; }
         .modalbox { background: white; border-radius: 26px; padding: 22px; width: 100%; box-shadow: 0 16px 60px #0004; max-height: 85%; overflow-y: auto; }
         
-        /* Contenedor del QR Real Validado Nítido */
         .qrbox { background: #fff; border: 2px dashed #1677bd; border-radius: 22px; padding: 15px; margin: 15px auto; text-align: center; width: 200px; height: 200px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px #0001; }
         .qrbox img { width: 170px; height: 170px; display: block; object-fit: contain; }
         
@@ -115,7 +114,7 @@
         <p>Selecciona tu perfil de acceso al ecosistema comercial.</p>
         <div class="card" style="margin-top: 30px;">
             <h3>🙋‍♂️ Perfil Usuario</h3>
-            <p class="small">Buscar por cualquier rincón de Chile, agregar extras y pagar salas de reuniones de forma segura.</p>
+            <p class="small">Buscar por cualquier comuna de Chile, agregar extras y pagar salas de reuniones de forma segura.</p>
             <button class="btn" onclick="setRole('user')">Ingresar como Usuario</button>
         </div>
         <div class="card">
@@ -136,7 +135,7 @@
         <h2>Explorar Co-Works</h2>
         
         <div class="search-container">
-            <input type="text" id="citySearchInput" placeholder="🔍 Escribe cualquier ciudad o comuna de Chile..." oninput="searchChileCities()">
+            <input type="text" id="citySearchInput" placeholder="🔍 Escribe una comuna (ej: Labranza, Pucón)..." oninput="searchChileCities()">
             <div id="suggestions" class="suggestions-box"></div>
         </div>
 
@@ -253,10 +252,6 @@
             <p><b>Sala Multiuso B</b> · Campus Hub Temuco</p>
             <button class="btn green" style="padding:10px; font-size:13px;" onclick="openReviewFlow('Sala Multiuso B')">⭐ Evaluar Espacio Usado</button>
         </div>
-        <div class="card" style="opacity:0.8;">
-            <div class="row"><b>Activa</b> <span style="color:#1677bd;">Confirmado</span></div>
-            <p><span id="historyPlace">Cowork Centro</span> · <span id="historyRoom">Box Privado 1</span></p>
-        </div>
         <nav class="nav">
             <button onclick="go('map')">🗺️ Mapa</button>
             <button class="active" onclick="go('history')">📂 Reservas</button>
@@ -336,7 +331,7 @@
         </div>
     </div>
 
-    <div id="infoModal" class="modal"><div class="modalbox"><h2 id="modalTitle">Aviso</h2><p id="modalText"></p><button class="btn" onclick="closeModal('infoModal')">Cerrar</button></div></div>
+    <div id="infoModal" class="modal"><div class="modalbox"><h2 id="modalTitle">Aviso</h2><p id="modalText"></p><button class="btn" onclick="closeInfo()">Entendido</button></div></div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -357,17 +352,17 @@
 
     function goHome() { go('roleSelection'); }
     
-    // ARREGLO DE BUG DE RENDERIZADO DEL MAPA
+    // NAVEGACIÓN CORREGIDA: SANA EL BUG DEL LIENZO GRIS E INICIALIZA LA BÚSQUEDA
     function go(id) { 
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
         const t = document.getElementById(id); 
         if(t) {
             t.classList.add('active');
-            // Forzar a Leaflet a recalcular sus dimensiones cuando la pantalla pasa a estar activa
+            // Si el usuario entra al mapa, forzar a Leaflet a recalcular su tamaño real inmediatamente
             if(id === 'map' && map) {
                 setTimeout(() => {
                     map.invalidateSize();
-                }, 50);
+                }, 100);
             }
         }
     }
@@ -377,23 +372,25 @@
     function initRealMap(useGPS) { 
         go('map'); 
         if (map) return; 
-        // Inicializar centrado en la Araucanía de forma predeterminada
+        
+        // Iniciar el mapa real
         map = L.map('mapReal').setView([-38.7396, -72.5903], 13); 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap'
+            maxZoom: 19
         }).addTo(map); 
+        
         markersLayer = L.layerGroup().addTo(map); 
         injectLocalMarker("Cowork Innovación Temuco", [-38.7385, -72.5930], 6000);
     }
 
-    // BUSCADOR REAL ABIERTO PARA LAS 346 COMUNAS DE CHILE
+    // RESOLUCIÓN DEL BUG: BUSCADOR ASÍNCRONO SIN ERRORES DE CONGELAMIENTO
     async function searchChileCities() {
         const query = document.getElementById('citySearchInput').value;
         const suggestionsBox = document.getElementById('suggestions');
         
         if (query.length < 3) { suggestionsBox.style.display = 'none'; return; }
         
+        // Consultar la API abierta de OpenStreetMap filtrando solo por Chile
         const url = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=cl&q=${encodeURIComponent(query)}`;
         
         try {
@@ -401,11 +398,15 @@
             const data = await response.json();
             suggestionsBox.innerHTML = '';
             
-            if (data.length > 0) {
+            if (data && data.length > 0) {
                 data.slice(0, 5).forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'suggestion-item';
-                    div.textContent = item.display_name.split(',').slice(0, 3).join(',');
+                    
+                    // Formatear el nombre limpio de la comuna/ciudad
+                    let parts = item.display_name.split(',');
+                    div.textContent = parts.slice(0, 2).join(',');
+                    
                     div.onclick = () => {
                         document.getElementById('citySearchInput').value = div.textContent;
                         suggestionsBox.style.display = 'none';
@@ -413,9 +414,9 @@
                         const lat = parseFloat(item.lat);
                         const lon = parseFloat(item.lon);
                         
-                        go('map');
+                        // Mover el mapa e inyectar el marcador en la nueva comuna comercial seleccionada
                         map.setView([lat, lon], 14);
-                        injectLocalMarker(`Hub Comercial - ${item.name || 'Zona Centro'}`, [lat, lon], 6800);
+                        injectLocalMarker(`Hub Comercial - ${parts[0]}`, [lat, lon], 7000);
                     };
                     suggestionsBox.appendChild(div);
                 });
@@ -424,7 +425,7 @@
                 suggestionsBox.style.display = 'none';
             }
         } catch (error) {
-            console.log("Error consultando cartografía:", error);
+            console.log("Error en el autocompletado:", error);
         }
     }
 
@@ -434,7 +435,7 @@
         marker.bindPopup(`<b>${name}</b>`).openPopup();
         
         const mockPlace = {
-            id: 'dinamico', name: name, coords: coords, rating: '4.8', details: 'Espacio comercial listo', basePrice: price,
+            id: 'dinamico', name: name, coords: coords, rating: '4.8', details: 'Espacio comercial listo para reservar', basePrice: price,
             reviews: [{ stars: 5, user: "Marta S.", text: "Muy cómodo, excelente iluminación y conectividad." }]
         };
         
@@ -547,6 +548,7 @@
     }
 
     function showAlertModal(title, msg) { document.getElementById('modalTitle').textContent = title; document.getElementById('modalText').textContent = msg; document.getElementById('infoModal').classList.add('show'); }
+    function closeInfo() { document.getElementById('infoModal').classList.remove('show'); }
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 </script>
 </body>
