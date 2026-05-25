@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>ReserveX V3.3 - Profesional</title>
+    <title>ReserveX V3.4 - Profesional</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
@@ -46,10 +46,10 @@
         .nav button { border: 0; background: transparent; color: #6b7e8d; font-weight: 800; font-size: 11px; cursor: pointer; }
         .nav button.active { color: #1677bd; }
         
-        /* Buscador de ciudades avanzado */
+        /* Buscador Todo Chile */
         .search-container { position: relative; width: 100%; margin-bottom: 8px; }
-        .suggestions-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #dceaf4; border-radius: 10px; z-index: 1000; max-height: 150px; overflow-y: auto; display: none; box-shadow: 0 4px 12px #0001; }
-        .suggestion-item { padding: 10px 14px; cursor: pointer; font-size: 14px; }
+        .suggestions-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #dceaf4; border-radius: 10px; z-index: 1000; max-height: 180px; overflow-y: auto; display: none; box-shadow: 0 4px 12px #0002; }
+        .suggestion-item { padding: 11px 14px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f0f6fa; }
         .suggestion-item:hover { background: #f0f8ff; }
 
         .mapContainer { position: relative; margin: 10px 0; border-radius: 24px; overflow: hidden; border: 1px solid #d8e9f2; }
@@ -75,13 +75,15 @@
         .modal.show { display: flex; }
         .modalbox { background: white; border-radius: 26px; padding: 22px; width: 100%; box-shadow: 0 16px 60px #0004; max-height: 85%; overflow-y: auto; }
         
-        .qrbox { background: white; border: 1px solid #e1e9ef; border-radius: 22px; padding: 14px; margin: 10px 0; text-align: center; }
+        /* Contenedor del QR Real */
+        .qrbox { background: white; border: 1px solid #e1e9ef; border-radius: 22px; padding: 20px; margin: 12px 0; text-align: center; display: flex; justify-content: center; align-items: center; }
+        .qrbox img { width: 180px; height: 180px; display: block; }
+        
         .code { font-size: 24px; letter-spacing: 4px; text-align: center; font-weight: 900; color: #12324d; background: #eef3f7; padding: 10px; border-radius: 16px; margin: 8px 0; }
         .stars { display: flex; justify-content: center; gap: 8px; font-size: 34px; margin: 10px 0; }
         .stars span { cursor: pointer; color: #d5dde3; }
         .stars span.on { color: #f5a623; }
 
-        /* Switch toggle administrativo */
         .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; inset: 0; background-color: #ccc; transition: .3s; border-radius: 24px; }
@@ -89,7 +91,6 @@
         input:checked + .slider { background-color: #62bd4e; }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* Estilos Pasarela Webpay integrada */
         .webpay-header { background: #e20613; color: white; padding: 10px; border-radius: 12px 12px 0 0; font-weight: bold; text-align: center; font-size: 14px; }
         .webpay-box { border: 2px solid #e20613; border-radius: 14px; padding: 12px; background: #fff; margin-top: 10px; }
     </style>
@@ -97,7 +98,7 @@
 <body>
 <div class="phone">
     <div id="splash"><div class="splash-logo">✓</div><h2 style="margin-top:20px; color:white;">ReserveX</h2><p style="color:#e2ecf4;">Cargando ecosistema...</p></div>
-    <div class="status"><span>9:41</span><strong>ReserveX Pro v3.3</strong><span>●●●</span></div>
+    <div class="status"><span>9:41</span><strong>ReserveX Pro v3.4</strong><span>●●●</span></div>
     <div class="app-header">
         <div class="logo" style="margin:0;"><div class="mark" style="width:30px; height:30px; border-radius:8px; font-size:14px;">✓</div><div class="brand" style="font-size:18px;">Reserve<span>X</span></div></div>
         <button class="btn-home" onclick="goHome()">🏠 Inicio</button>
@@ -116,12 +117,12 @@
         <p>Selecciona tu perfil de acceso al ecosistema comercial.</p>
         <div class="card" style="margin-top: 30px;">
             <h3>🙋‍♂️ Perfil Usuario</h3>
-            <p class="small">Buscar por ciudades de Chile, agregar extras y pagar salas de reuniones o boxes de forma segura.</p>
+            <p class="small">Buscar por cualquier rincón de Chile, agregar extras y pagar salas de reuniones de forma segura.</p>
             <button class="btn" onclick="setRole('user')">Ingresar como Usuario</button>
         </div>
         <div class="card">
             <h3>🏢 Perfil Prestador (Dueño)</h3>
-            <p class="small">Ver panel administrativo, revisar saldo acumulado y retirar tus ingresos directamente a tu banco.</p>
+            <p class="small">Ver tu balance acumulado y retirar tus ingresos con el descuento automático de comisión por espacio.</p>
             <button class="btn dark" onclick="setRole('provider')">Ingresar como Prestador</button>
         </div>
     </section>
@@ -137,7 +138,7 @@
         <h2>Explorar Co-Works</h2>
         
         <div class="search-container">
-            <input type="text" id="citySearchInput" placeholder="🔍 Escribe una ciudad de Chile... (ej: Temuco)" oninput="filterCities()">
+            <input type="text" id="citySearchInput" placeholder="🔍 Busca cualquier ciudad o comuna de Chile..." oninput="searchChileCities()">
             <div id="suggestions" class="suggestions-box"></div>
         </div>
 
@@ -206,7 +207,6 @@
 
     <section id="payment" class="screen">
         <button class="btn alt" onclick="go('terms')">← Volver</button>
-        
         <div class="webpay-header">🔒 Transbank Webpay OneClick / API Segura</div>
         <div class="webpay-box">
             <div class="summary" style="background:#f9f9f9; padding:10px; border-radius:8px; font-size:13px; margin-bottom:10px;">
@@ -215,18 +215,13 @@
                 <p id="payBreakdown" class="small"></p>
                 <p style="font-size:15px; margin-top:5px; color:#e20613;"><b>Total a cargar:</b> <span id="payPrice"></span></p>
             </div>
-            
             <label>Selecciona tu Banco o Tarjeta Guardada</label>
             <select id="paymentMethod">
                 <option value="visa">💳 Visa Débito / Crédito (BancoEstado / Santander / Chile)</option>
                 <option value="khipu">🏦 Transferencia Segura Automatizada (Khipu)</option>
-                <option value="mach">📱 Tarjeta Prepago MACH / Tenpo</option>
             </select>
-            
             <input placeholder="RUT del Titular (ej: 12.345.678-9)" type="text">
-            <p class="small" style="color: #6b7e8d; font-size:11px; text-align:center; margin-top:5px;">Esta transacción está encriptada mediante SSL y protegida por la normativa financiera de la CMF.</p>
         </div>
-        
         <button class="btn green" style="background:#e20613!important; margin-top:15px;" onclick="processPayment()">Pagar con Webpay Segura</button>
     </section>
 
@@ -238,13 +233,18 @@
             <p class="small">Comparte este token para el registro de tus acompañantes en recepción:</p>
             <div style="font-size:20px; font-weight:900; text-align:center; color:#12324d;" id="guestCodeBox">INV-9921</div>
         </div>
-        <button class="btn alt" onclick="simulateExport('Google Calendar')">📅 Sincronizar Calendario Móvil</button>
         <button class="btn" onclick="go('code')">Ver Pase QR Acceso</button>
     </section>
 
     <section id="code" class="screen">
         <h2>Pase de Acceso QR</h2>
-        <div class="qrbox"><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcIAAAHCAQAAAABUY/ToAAADnUlEQVR4nO2cy23kMAyGf64MzFEGUsCUYnewJQUpKR1YpaSABazjADK4B4p+5XHIZjDj2Z8Hw68PsgCC4ksWxfck/fomCJAkSZIkSZIkSd4fKVUaAJhE+iwi0gLSZxHADyb9jb+W5F2SnaqqjgBSG1RfzmXzViyQHkFVVXVLfn9Mkg9GZrcv3TiJPL810CE30CGqAvlkmuOm6tZfS/KuydQCOiAoOr2I9Lmub9cck+Shyeb9raC2eNkZCpB+l0aRf2pMko9Fug5FBZAB6capARCKpn4SRX4qQK6vrROSx5onyauTSWogZr5PNwLyPAaVHsvZZGHZ7b+W5F2RZmAW+6LIk2hqA4B4EaQWUpexuC2LHGueJK9HwsL1TsvsSRfUy1gPAILa5SLDseZJ8npkVQsL4WMBEAt0AFx9orpejYDqGNSSSdQhki7VDo2be0NURTcGO+gQXc2qlaIOkVyJp56D2yEEy1hXAzW/aJozL2jUIZIu6/LFrEid+0h+uVnfaIdIrsXjsvxUBPGPAPmkAgCaBED3ejIrJZ1OzfL0aPMkeT1yHZepO0DmSS+r2mAZ6zA7RbRDJBdZ7JBK9YcATb1nElMfCoBJFJjEgrPbfS3JeyTf5YfMBEVvBQEAxvYkvxSP7YNupCqNB/3B3W6uZSQ/JSfrY5QesAYQAEH15ewBvjlKmfUykntZxfbdkhCKNReE2bG2s2F571jzJHk9cvaHqiKpjq40c9EMqwiN+SGSe/H+ofxUTInSb2s/K4LcQoCTCuIIq9t3I5gfIvkxGQuQfF+HedL+2Pkl0qfYlzxZPMneT1ybueYKxwWoa17P+BoKNoed2WpMEpPkR16eD55ojHMJ1tPWNStkzfYTbofYpZ/6eC9E8ktSnrXAWjw63yu93q3I3g+S72Rvh+by/KLO6vT9gXbI0B/W3e7vkeRDkv0mO6RS/SFAU+ZZxNSHAmASBSYx4Gx3X0vyHsl3+SHzwYV2CD9mPmhIdwNfN88f6pSWhO2UfWwH2mGSD5rs/KHqRGNztqQhAa5lJPeyLZPpUhFbbY70f+p9HbYm+bEwy8X6133Zby8vT7wYf8PNoS3bC+lpLgPkygXbL8Vje3N6YI8kv9Scl/NFanPQWwMdcAnS+WB9+jpgEruHeGGOkeRDktt62vpmhczZDrRDRD4pWf6fTf9wIJorZgAAAABJRU5ErkJoggling='></div>
+        <p class="small">Presenta este código al llegar al establecimiento para registrar tu ingreso automático.</p>
+        
+        <div class="qrbox">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ReserveX-AccessCode-RX9921" alt="Código QR de Validación">
+        </div>
+        
+        <div class="code">RX-TEM-2026</div>
         <button class="btn dark" onclick="go('history')">Ir a mis Reservas</button>
     </section>
 
@@ -279,12 +279,12 @@
         
         <div class="row" style="gap:10px; margin: 10px 0;">
             <div class="card" style="flex:1; margin:0; text-align:center; padding:10px;">
-                <span class="small">Saldo Disponible</span>
-                <h3 style="color:#62bd4e; font-size:18px; margin-top:5px;" id="adminBalanceText">$340.000</h3>
+                <span class="small">Saldo Acumulado</span>
+                <h3 style="color:#62bd4e; font-size:18px; margin-top:5px;" id="adminBalanceText">$450.000</h3>
             </div>
             <div class="card" style="flex:1; margin:0; text-align:center; padding:10px;">
-                <span class="small">Reservas Activas</span>
-                <h3 style="color:#1677bd; font-size:18px; margin-top:5px;">14</h3>
+                <span class="small">Comisión Espacio</span>
+                <h3 style="color:#e95a5a; font-size:15px; margin-top:5px;">12%</h3>
             </div>
         </div>
 
@@ -292,8 +292,7 @@
 
         <label>Mis Espacios Ofrecidos</label>
         <div class="card" style="background: white;"><div class="row"><div><h3>Sala de Reuniones</h3><p class="small">Base: $12.000/h</p></div><label class="switch"><input type="checkbox" checked onchange="toggleRoomAvailability('Sala Ejecutiva', this.checked)"><span class="slider"></span></label></div></div>
-        <div class="card" style="background: white;"><div class="row"><div><h3>Box Privado</h3><p class="small">Base: $6.000/h</p></div><label class="switch"><input type="checkbox" checked onchange="toggleRoomAvailability('Box Individual', this.checked)"><span class="slider"></span></label></div></div>
-
+        
         <nav class="nav">
             <button class="active" onclick="go('adminPanel')">📊 Mi Panel</button>
             <button onclick="go('roleSelection')">🔄 Cambiar de Rol</button>
@@ -310,30 +309,27 @@
 
     <div id="withdrawalModal" class="modal">
         <div class="modalbox">
-            <h2>Retirar Ganancias Acumuladas</h2>
-            <p class="small">Transfiere tus fondos directamente a tu cuenta bancaria comercial en Chile.</p>
+            <h2>Retirar Ganancias</h2>
+            <p class="small">Retira tus fondos. Se aplicará una comisión del 12% por uso del espacio.</p>
             
-            <label>Monto a Retirar (Pesos Chilenos)</label>
-            <input type="number" id="withdrawAmount" placeholder="Ej: 150000" max="340000">
+            <label>Monto Bruto a Retirar ($)</label>
+            <input type="number" id="withdrawAmount" placeholder="Ej: 100000" oninput="calculatePlatformFee()">
+            
+            <div class="card" style="background:#fdf1f2; border:1px solid #fbcbd0; font-size:12px; margin: 8px 0; padding:10px;">
+                <div class="row"><span>Comisión Plataforma (12%):</span><span id="feeAmountText" style="color:#e95a5a; font-weight:bold;">$0</span></div>
+                <div class="row" style="margin-top:5px; font-size:13px; font-weight:bold;"><span>Líquido a recibir en cuenta:</span><span id="netAmountText" style="color:#62bd4e;">$0</span></div>
+            </div>
             
             <label>Banco Destino</label>
             <select>
                 <option>BancoEstado</option>
-                <option>Banco de Chile / Edwards</option>
+                <option>Banco de Chile</option>
                 <option>Banco Santander</option>
-                <option>BCI / Mach</option>
             </select>
-            
-            <label>Tipo de Cuenta</label>
-            <select>
-                <option>Cuenta Corriente</option>
-                <option>Cuenta Vista / Cuenta RUT</option>
-            </select>
-            
             <label>Número de Cuenta</label>
-            <input placeholder="1234567890" type="text">
+            <input placeholder="123456789" type="text">
             
-            <button class="btn green" onclick="executeWithdrawal()">Confirmar Transferencia Bancaria</button>
+            <button class="btn green" onclick="executeWithdrawal()">Confirmar y Transferir</button>
             <button class="btn alt" onclick="closeModal('withdrawalModal')">Cancelar</button>
         </div>
     </div>
@@ -344,25 +340,11 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     let map, markersLayer, currentRatingScore = 0;
-    let prestadorSaldo = 340000; // Saldo de simulación del administrador
+    let prestadorSaldo = 450000; 
 
-    // Listado Georreferenciado completo de Ciudades dentro de Chile para el buscador
-    const chileCities = [
-        { name: "Temuco (Araucanía)", key: "temuco", center: [-38.7396, -72.5903] },
-        { name: "Santiago (Metropolitana)", key: "santiago", center: [-33.4168, -70.6067] },
-        { name: "Concepción (Biobío)", key: "concepcion", center: [-36.8261, -73.0498] },
-        { name: "Valparaíso (Valparaíso)", key: "valparaiso", center: [-33.0472, -71.6127] },
-        { name: "Antofagasta (Antofagasta)", key: "antofagasta", center: [-23.6509, -70.3975] },
-        { name: "Puerto Montt (Los Lagos)", key: "puertomontt", center: [-41.4693, -72.9424] }
-    ];
-    
+    // Base de datos dinámica inicial
     const dataEspacios = {
-        temuco: { places: [{ id: 't1', name: 'Cowork Centro Temuco', coords: [-38.7385, -72.5930], rating: '4.8', details: 'Av. Alemania', basePrice: 6000, reviews: [{ stars: 5, user: "Carlos M.", text: "Excelente aislamiento acústico en Av. Alemania." }] }] },
-        santiago: { places: [{ id: 's1', name: 'Providencia FlexHub', coords: [-33.4180, -70.6050], rating: '4.9', details: 'Metro Tobalaba', basePrice: 12000, reviews: [{ stars: 5, user: "Ignacio T.", text: "Monitor premium excelente." }] }] },
-        concepcion: { places: [{ id: 'c1', name: 'BioBío Tech Cowork', coords: [-36.8250, -73.0470], rating: '4.5', details: 'Plaza Perú', basePrice: 5500, reviews: [{ stars: 4, user: "Marta S.", text: "Cómodo y céntrico." }] }] },
-        valparaiso: { places: [{ id: 'v1', name: 'Puerto Digital Cowork', coords: [-33.0450, -71.6150], rating: '4.7', details: 'Sector El Plan', basePrice: 7000, reviews: [{ stars: 5, user: "Lucas R.", text: "Gran vista y café de grano ilimitado." }] }] },
-        antofagasta: { places: [{ id: 'a1', name: 'Norte Grande Hub', coords: [-23.6550, -70.3950], rating: '4.6', details: 'Frente al Mar', basePrice: 9000, reviews: [] }] },
-        puertomontt: { places: [{ id: 'pm1', name: 'Patagonia Tech Box', coords: [-41.4710, -72.9400], rating: '4.4', details: 'Centro Costanera', basePrice: 6500, reviews: [] }] }
+        general: { name: "Espacio Genérico", coords: [0,0], rating: '4.6', details: 'Centro Comercial', basePrice: 7000, reviews: [{ stars: 5, user: "Cliente Frecuente", text: "Muy cómodo." }] }
     };
     
     const salasPorLugar = [{ name: 'Box Privado', priceMod: 1, info: '2 personas max.' }, { name: 'Sala de Reuniones', priceMod: 2, info: 'Equipada con Proyector.' }];
@@ -386,70 +368,88 @@
         map = L.map('mapReal').setView([-38.7396, -72.5903], 13); 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); 
         markersLayer = L.layerGroup().addTo(map); 
-        renderCityMarkers('temuco'); 
+        injectLocalMarker("Cowork Inovación Temuco", [-38.7385, -72.5930], 6000);
     }
 
-    // Lógica avanzada del buscador autocompletable
-    function filterCities() {
-        const query = document.getElementById('citySearchInput').value.toLowerCase();
+    // BUSCADOR REAL CONECTADO A API DE OPENSTREETMAP (TODO CHILE)
+    async function searchChileCities() {
+        const query = document.getElementById('citySearchInput').value;
         const suggestionsBox = document.getElementById('suggestions');
-        suggestionsBox.innerHTML = '';
         
-        if(!query) { suggestionsBox.style.display = 'none'; return; }
+        if (query.length < 3) { suggestionsBox.style.display = 'none'; return; }
         
-        const filtered = chileCities.filter(c => c.name.toLowerCase().includes(query));
+        // Consultar la API oficial para buscar cualquier rincón de Chile
+        const url = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=cl&q=${encodeURIComponent(query)}`;
         
-        if(filtered.length > 0) {
-            filtered.forEach(city => {
-                const item = document.createElement('div');
-                item.className = 'suggestion-item';
-                item.textContent = city.name;
-                item.onclick = () => {
-                    document.getElementById('citySearchInput').value = city.name;
-                    suggestionsBox.style.display = 'none';
-                    map.setView(city.center, 13);
-                    renderCityMarkers(city.key);
-                };
-                suggestionsBox.appendChild(item);
-            });
-            suggestionsBox.style.display = 'block';
-        } else {
-            suggestionsBox.style.display = 'none';
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            suggestionsBox.innerHTML = '';
+            
+            if (data.length > 0) {
+                data.slice(0, 5).forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    // Acortar el texto para que calce estéticamente en la pantalla móvil
+                    div.textContent = item.display_name.split(',').slice(0, 2).join(',');
+                    div.onclick = () => {
+                        document.getElementById('citySearchInput').value = div.textContent;
+                        suggestionsBox.style.display = 'none';
+                        
+                        const lat = parseFloat(item.lat);
+                        const lon = parseFloat(item.lon);
+                        map.setView([lat, lon], 14);
+                        
+                        // Crear un espacio comercial simulado dinámicamente en esa nueva ciudad de Chile
+                        injectLocalMarker(`Hub Comercial - ${item.name || 'Centro'}`, [lat, lon], 7500);
+                    };
+                    suggestionsBox.appendChild(div);
+                });
+                suggestionsBox.style.display = 'block';
+            } else {
+                suggestionsBox.style.display = 'none';
+            }
+        } catch (error) {
+            console.log("Error buscando locación:", error);
         }
     }
 
-    function renderCityMarkers(cityKey) { 
-        if (!markersLayer) return; 
-        markersLayer.clearLayers(); 
-        const cityData = dataEspacios[cityKey]; 
+    function injectLocalMarker(name, coords, price) {
+        markersLayer.clearLayers();
+        const marker = L.marker(coords).addTo(markersLayer);
+        marker.bindPopup(`<b>${name}</b>`).openPopup();
+        
+        const mockPlace = {
+            id: 'dinamico',
+            name: name,
+            coords: coords,
+            rating: '4.7',
+            details: 'Espacio disponible listo para reservar',
+            basePrice: price,
+            reviews: [{ stars: 5, user: "Ignacio R.", text: "Muy buena señal de internet y limpieza impecable." }]
+        };
+        
+        marker.on('click', () => bindPlaceSelection(mockPlace));
+        
         const listDiv = document.getElementById('placesList'); 
         listDiv.innerHTML = ''; 
-        
-        if (!cityData) { listDiv.innerHTML = '<p class="small">No hay espacios registrados aún en esta zona.</p>'; return; }
-
-        cityData.places.forEach(p => { 
-            const marker = L.marker(p.coords).addTo(markersLayer); 
-            marker.bindPopup(`<b>${p.name}</b>`); 
-            marker.on('click', () => bindPlaceSelection(p, cityKey)); 
-            const card = document.createElement('div'); 
-            card.className = 'place'; 
-            card.onclick = () => bindPlaceSelection(p, cityKey); 
-            card.innerHTML = `<div class="row"><h3>${p.name}</h3><span class="rating">★ ${p.rating}</span></div><p class="small">${p.details}</p><span class="price">Desde $${p.basePrice}/h</span>`; 
-            listDiv.appendChild(card); 
-        }); 
+        const card = document.createElement('div');
+        card.className = 'place';
+        card.onclick = () => bindPlaceSelection(mockPlace);
+        card.innerHTML = `<div class="row"><h3>${name}</h3><span class="rating">★ 4.7</span></div><p class="small">Disponible en tu rango seleccionado</p><span class="price">Desde $${price}/h</span>`; 
+        listDiv.appendChild(card);
     }
 
-    function bindPlaceSelection(placeObj, cityKey) { 
+    function bindPlaceSelection(placeObj) { 
         selectedPlaceObj = placeObj; 
         document.getElementById('placeTitle').textContent = placeObj.name; 
-        document.getElementById('placeReviewsCount').textContent = `Basado en ${placeObj.reviews ? placeObj.reviews.length : 0} opiniones registradas.`;
+        document.getElementById('placeReviewsCount').textContent = `Basado en ${placeObj.reviews.length} opiniones registradas.`;
         
         const container = document.getElementById('roomsList'); 
         container.innerHTML = ''; 
         salasPorLugar.forEach(sala => { 
             const finalPrice = Math.round(placeObj.basePrice * sala.priceMod); 
-            const el = document.createElement('div'); 
-            el.className = 'room'; 
+            const el = document.createElement('div'); el.className = 'room';
             el.onclick = () => { 
                 selectedRoomObj = { name: sala.name, price: finalPrice }; 
                 document.getElementById('roomTitle').textContent = sala.name; 
@@ -466,14 +466,11 @@
         if (!selectedPlaceObj) return;
         const container = document.getElementById('commentsContainer');
         container.innerHTML = '';
-        if(!selectedPlaceObj.reviews || selectedPlaceObj.reviews.length === 0){ container.innerHTML = '<p class="small">Este local aún no tiene comentarios escritos.</p>'; }
-        else {
-            selectedPlaceObj.reviews.forEach(r => {
-                const div = document.createElement('div'); div.className = 'review-item';
-                div.innerHTML = `<div class="row"><strong>${r.user}</strong> <span class="rating">${'★'.repeat(r.stars)}</span></div><p class="small" style="margin-top:5px;">"${r.text}"</p>`;
-                container.appendChild(div);
-            });
-        }
+        selectedPlaceObj.reviews.forEach(r => {
+            const div = document.createElement('div'); div.className = 'review-item';
+            div.innerHTML = `<div class="row"><strong>${r.user}</strong> <span class="rating">${'★'.repeat(r.stars)}</span></div><p class="small" style="margin-top:5px;">"${r.text}"</p>`;
+            container.appendChild(div);
+        });
         document.getElementById('commentsModal').classList.add('show');
     }
 
@@ -502,23 +499,40 @@
         go('reminder'); 
     }
 
-    function simulateExport(p) { showAlertModal('Éxito', `Sincronizado con ${p}`); }
     function openReviewFlow(name) { document.getElementById('reviewTargetName').textContent = name; currentRatingScore = 0; document.querySelectorAll('#starsContainer span').forEach(s => s.classList.remove('on')); go('review'); }
     function setRatingScore(score) { currentRatingScore = score; document.getElementById('ratingValidationError').style.display = 'none'; document.querySelectorAll('#starsContainer span').forEach((s, idx) => s.classList.toggle('on', idx < score)); }
     function submitReviewData() { if (currentRatingScore === 0) { document.getElementById('ratingValidationError').style.display = 'block'; return; } showAlertModal('Gracias', 'Evaluación enviada.'); go('map'); }
     function toggleRoomAvailability(r, ch) { showAlertModal('Inventario', `Estado de ${r} modificado.`); }
     
-    // Funciones del Administrador: Retiro de fondos
-    function openWithdrawalModal() { document.getElementById('withdrawalModal').classList.add('show'); }
+    // CONTROL DEL ADMINISTRADOR: CÁLCULO DE COMISIONES POR USO DEL ESPACIO
+    function openWithdrawalModal() { 
+        document.getElementById('withdrawAmount').value = '';
+        document.getElementById('feeAmountText').textContent = '$0';
+        document.getElementById('netAmountText').textContent = '$0';
+        document.getElementById('withdrawalModal').classList.add('show'); 
+    }
+    
+    function calculatePlatformFee() {
+        const amt = parseInt(document.getElementById('withdrawAmount').value) || 0;
+        const fee = Math.round(amt * 0.12); // Comisión del 12% por uso del espacio
+        const net = amt - fee;
+        
+        document.getElementById('feeAmountText').textContent = `$${fee.toLocaleString('es-CL')}`;
+        document.getElementById('netAmountText').textContent = `$${net.toLocaleString('es-CL')}`;
+    }
+
     function executeWithdrawal() {
         const amt = parseInt(document.getElementById('withdrawAmount').value);
         if(!amt || amt <= 0) { showAlertModal('Error', 'Ingresa un monto de retiro válido.'); return; }
         if(amt > prestadorSaldo) { showAlertModal('Fondos Insuficientes', 'No puedes retirar más del saldo disponible.'); return; }
         
+        const fee = Math.round(amt * 0.12);
+        const net = amt - fee;
+        
         prestadorSaldo -= amt;
         document.getElementById('adminBalanceText').textContent = `$${prestadorSaldo.toLocaleString('es-CL')}`;
         closeModal('withdrawalModal');
-        showAlertModal('Retiro Exitoso', `Tu solicitud de transferencia por $${amt.toLocaleString('es-CL')} ha sido enviada a tu banco. Fondos disponibles en 24 horas hábiles.`);
+        showAlertModal('Retiro Exitoso', `Solicitud procesada.\n\nMonto Bruto: $${amt.toLocaleString('es-CL')}\nComisión por espacio (12%): -$${fee.toLocaleString('es-CL')}\nLíquido enviado a tu banco: $${net.toLocaleString('es-CL')}`);
     }
 
     function showAlertModal(title, msg) { document.getElementById('modalTitle').textContent = title; document.getElementById('modalText').textContent = msg; document.getElementById('infoModal').classList.add('show'); }
