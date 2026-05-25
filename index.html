@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>ReserveX V3.1 - Profesional</title>
+    <title>ReserveX V3.2 - Profesional</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
@@ -14,79 +14,117 @@
         .app-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; border-bottom: 1px solid #e2ecf4; background: #fff; }
         .screen { display: none; height: 100%; overflow-y: auto; padding: 15px 20px 82px; flex-grow: 1; position: relative; }
         .screen.active { display: flex; flex-direction: column; }
+        
         #splash { position: absolute; inset: 0; background: linear-gradient(135deg, #1a9ad6, #64c85c); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: opacity 0.6s ease; }
         .splash-logo { width: 90px; height: 90px; border-radius: 28px; background: white; display: grid; place-items: center; font-size: 45px; font-weight: 900; color: #1a9ad6; box-shadow: 0 12px 30px #0003; animation: pulsePop 1.2s infinite alternate; }
         @keyframes pulsePop { 0% { transform: scale(0.95); } 100% { transform: scale(1.05); } }
-        h1 { margin: 8px 0; font-size: 28px; font-weight: 900; }
+        
+        h1 { margin: 8px 0; font-size: 26px; font-weight: 900; }
         h2 { margin: 8px 0 14px; font-size: 21px; font-weight: 800; }
         h3 { margin: 0 0 4px; font-size: 16px; }
         p { line-height: 1.42; color: #496173; margin: 6px 0; }
         .small { font-size: 13px; color: #6b7e8d; }
+        
         .logo { display: flex; align-items: center; gap: 10px; margin-top: 18px; }
         .mark { width: 43px; height: 43px; border-radius: 14px; background: linear-gradient(135deg, #1a9ad6, #64c85c); display: grid; place-items: center; color: white; font-weight: 900; }
         .brand { font-size: 30px; font-weight: 900; }
         .brand span { color: #62bd4e; }
+        
         .btn { width: 100%; border: 0; border-radius: 16px; background: #1677bd; color: white; padding: 14px; font-size: 15px; font-weight: 800; margin: 8px 0; cursor: pointer; text-align: center; text-decoration: none; display: block; }
         .alt { background: #e9f3fb!important; color: #1677bd!important; }
         .green { background: #62bd4e!important; }
         .dark { background: #12324d!important; }
         .danger { background: #e95a5a!important; }
         .btn-home { background: none; border: 0; color: #1677bd; font-size: 20px; cursor: pointer; padding: 4px; display: flex; align-items: center; }
+        
         .card { background: #f6f9fc; border: 1px solid #e2ecf4; border-radius: 20px; padding: 15px; margin: 11px 0; }
         .row { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
         input, select, textarea { width: 100%; padding: 13px; border: 1px solid #dceaf4; border-radius: 14px; font-size: 15px; margin: 7px 0; background: white; }
         textarea { min-height: 80px; resize: none; }
         label { font-size: 13px; font-weight: 800; color: #445b6e; margin-top: 6px; display: block; }
+        
         .nav { position: absolute; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e2ecf4; display: flex; justify-content: space-around; padding: 10px 6px; z-index: 10; }
         .nav button { border: 0; background: transparent; color: #6b7e8d; font-weight: 800; font-size: 11px; cursor: pointer; }
         .nav button.active { color: #1677bd; }
+        
         .search-box { display: flex; gap: 6px; margin-bottom: 8px; }
         .mapContainer { position: relative; margin: 10px 0; border-radius: 24px; overflow: hidden; border: 1px solid #d8e9f2; }
-        #mapReal { height: 320px; width: 100%; transition: height 0.3s ease; }
-        #mapReal.zoom { height: 420px; }
-        .place, .room, .extra-item { border: 1px solid #dceaf4; border-radius: 18px; padding: 14px; margin: 10px 0; background: white; cursor: pointer; }
+        #mapReal { height: 260px; width: 100%; }
+        
+        .place, .room, .extra-item, .review-item { border: 1px solid #dceaf4; border-radius: 18px; padding: 14px; margin: 10px 0; background: white; cursor: pointer; }
+        .review-item { cursor: default; background: #fafcfe; }
         .rating { color: #f5a623; font-weight: 900; }
         .price { font-weight: 900; color: #1677bd; }
+        
         .timegrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
         .time { padding: 13px; border: 1px solid #dceaf4; border-radius: 14px; text-align: center; background: white; cursor: pointer; }
         .time.on { background: #1677bd; color: white; font-weight: 900; }
         .time.disabled { opacity: .4; background: #eee; cursor: not-allowed; }
+        
         .extra-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; }
         .extra-controls { display: flex; align-items: center; gap: 10px; }
         .extra-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #1677bd; background: white; color: #1677bd; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .check { display: flex; gap: 9px; align-items: flex-start; margin: 10px 0; font-size: 14px; }
         .check input { width: auto; margin-top: 4px; }
+        
         .modal { position: absolute; inset: 0; background: #05121e88; display: none; align-items: center; justify-content: center; padding: 22px; z-index: 20; }
         .modal.show { display: flex; }
-        .modalbox { background: white; border-radius: 26px; padding: 22px; width: 100%; box-shadow: 0 16px 60px #0004; }
+        .modalbox { background: white; border-radius: 26px; padding: 22px; width: 100%; box-shadow: 0 16px 60px #0004; max-height: 80%; overflow-y: auto; }
+        
         .qrbox { background: white; border: 1px solid #e1e9ef; border-radius: 22px; padding: 14px; margin: 10px 0; text-align: center; }
         .code { font-size: 24px; letter-spacing: 4px; text-align: center; font-weight: 900; color: #12324d; background: #eef3f7; padding: 10px; border-radius: 16px; margin: 8px 0; }
         .stars { display: flex; justify-content: center; gap: 8px; font-size: 34px; margin: 10px 0; }
         .stars span { cursor: pointer; color: #d5dde3; }
         .stars span.on { color: #f5a623; }
+
+        /* Switch toggle para administrador */
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #ccc; transition: .3s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: #62bd4e; }
+        input:checked + .slider:before { transform: translateX(20px); }
     </style>
 </head>
 <body>
 <div class="phone">
-    <div id="splash"><div class="splash-logo">✓</div><h2 style="margin-top:20px; color:white;">ReserveX</h2><p style="color:#e2ecf4;">Cargando espacios...</p></div>
-    <div class="status"><span>9:41</span><strong>ReserveX Premium</strong><span>●●●</span></div>
+    <div id="splash"><div class="splash-logo">✓</div><h2 style="margin-top:20px; color:white;">ReserveX</h2><p style="color:#e2ecf4;">Cargando ecosistema...</p></div>
+    <div class="status"><span>9:41</span><strong>ReserveX Pro</strong><span>●●●</span></div>
     <div class="app-header">
         <div class="logo" style="margin:0;"><div class="mark" style="width:30px; height:30px; border-radius:8px; font-size:14px;">✓</div><div class="brand" style="font-size:18px;">Reserve<span>X</span></div></div>
         <button class="btn-home" onclick="goHome()">🏠 Inicio</button>
     </div>
+
     <section id="login" class="screen active">
         <h1>Arrienda espacios cerca de ti</h1>
-        <p>Encuentra coworks, boxes y salas en tiempo real en todo Chile, paga seguro y accede al instante.</p>
-        <input placeholder="Correo electrónico" value="valentina@reservex.cl">
+        <p>Encuentra coworks y salas en tiempo real, o gestiona tus locales comerciales como prestador.</p>
+        <input placeholder="Correo electrónico" value="contacto@reservex.cl">
         <input placeholder="Contraseña" type="password" value="******">
-        <button class="btn" onclick="go('permission')">Iniciar sesión</button>
+        <button class="btn" onclick="go('roleSelection')">Iniciar sesión</button>
     </section>
+
+    <section id="roleSelection" class="screen">
+        <h2>¿Cómo deseas ingresar hoy?</h2>
+        <p>Selecciona tu perfil de acceso al ecosistema comercial.</p>
+        <div class="card" style="margin-top: 30px;">
+            <h3>🙋‍♂️ Perfil Usuario</h3>
+            <p class="small">Buscar, reservar, agregar extras y pagar salas de reuniones o boxes en tu ciudad.</p>
+            <button class="btn" onclick="setRole('user')">Ingresar como Usuario</button>
+        </div>
+        <div class="card">
+            <h3>🏢 Perfil Prestador (Dueño)</h3>
+            <p class="small">Ver panel de administración, revisar ganancias, controlar inventario y activar/desactivar locales.</p>
+            <button class="btn dark" onclick="setRole('provider')">Ingresar como Prestador</button>
+        </div>
+    </section>
+
     <section id="permission" class="screen">
         <h2>Permiso de ubicación</h2>
         <p>ReserveX necesita tu ubicación para sugerir los espacios comerciales más próximos de manera automática.</p>
         <button class="btn green" onclick="initRealMap(true)">Permitir ubicación</button>
         <button class="btn alt" onclick="initRealMap(false)">Continuar sin ubicación</button>
     </section>
+
     <section id="map" class="screen">
         <h2>Explorar Co-Works</h2>
         <div class="search-box">
@@ -96,19 +134,32 @@
                 <option value="concepcion">Concepción (Biobío)</option>
             </select>
         </div>
-        <div class="row" style="margin-bottom:8px;">
-            <button class="btn alt" style="margin:0; padding:8px;" onclick="toggleMapZoom()">Expandir Mapa</button>
-            <button class="btn alt" style="margin:0; padding:8px;" onclick="locateMe()">Mi Ubicación</button>
-        </div>
         <div class="mapContainer"><div id="mapReal"></div></div>
         <div id="placesList"></div>
-        <nav class="nav"><button class="active" onclick="go('map')">Mapa</button><button onclick="go('history')">Reservas</button></nav>
+        <nav class="nav">
+            <button class="active" onclick="go('map')">🗺️ Mapa</button>
+            <button onclick="go('history')">📂 Reservas</button>
+            <button onclick="go('roleSelection')">🔄 Cambiar Rol</button>
+        </nav>
     </section>
+
     <section id="rooms" class="screen">
-        <button class="btn alt" onclick="go('map')">← Volver</button>
-        <h2 id="placeTitle">Espacio</h2>
+        <button class="btn alt" onclick="go('map')">← Volver al Mapa</button>
+        <h2 id="placeTitle">Espacio Comercial</h2>
+        
+        <div class="card" style="background: #fff8eb; border: 1px solid #ffd899; margin-bottom:15px;">
+            <div class="row">
+                <div>
+                    <strong>Calificación general del Hub</strong>
+                    <p class="small" id="placeReviewsCount">Cargando opiniones...</p>
+                </div>
+                <button class="btn dark" style="width:auto; margin:0; padding:8px 12px; font-size:12px;" onclick="openCommentsModal()">💬 Ver Reseñas</button>
+            </div>
+        </div>
+
         <div id="roomsList"></div>
     </section>
+
     <section id="schedule" class="screen">
         <button class="btn alt" onclick="go('rooms')">← Volver</button>
         <h2 id="roomTitle">Sala</h2>
@@ -119,65 +170,98 @@
         </div>
         <button class="btn" onclick="go('extras')">Continuar</button>
     </section>
+
     <section id="extras" class="screen">
         <button class="btn alt" onclick="go('schedule')">← Volver</button>
         <h2>¿Deseas agregar extras?</h2>
         <div class="extra-item">
-            <div><h3>☕ Café de Grano</h3><p class="small">Espresso ilimitado. (+$2.500)</p></div>
+            <div><h3>☕ Café de Grano</h3><p class="small">Espresso ilimitado en sala. (+$2.500)</p></div>
             <div class="extra-controls"><button class="extra-btn" onclick="updateExtra('cafe', -1)">-</button><b id="count-cafe">0</b><button class="extra-btn" onclick="updateExtra('cafe', 1)">+</button></div>
         </div>
         <div class="extra-item">
-            <div><h3>🍪 Galletas Dulce Grano</h3><p class="small">Artesanales avena-chocolate. (+$3.000)</p></div>
+            <div><h3>🍪 Galletas Dulce Grano</h3><p class="small">Artesanales de avena-chocolate. (+$3.000)</p></div>
             <div class="extra-controls"><button class="extra-btn" onclick="updateExtra('galletas', -1)">-</button><b id="count-galletas">0</b><button class="extra-btn" onclick="updateExtra('galletas', 1)">+</button></div>
         </div>
         <div class="card"><div class="row"><span>Subtotal Extras:</span><strong id="extraTotalText">$0</strong></div></div>
-        <button class="btn green" onclick="go('terms')">Continuar</button>
+        <button class="btn green" onclick="go('terms')">Continuar a condiciones</button>
     </section>
+
     <section id="terms" class="screen">
         <button class="btn alt" onclick="go('extras')">← Volver</button>
-        <h2>Condiciones</h2>
-        <label class="check"><input id="acceptTerms" type="checkbox"> Acepto las cláusulas y montos.</label>
-        <button class="btn green" onclick="confirmTerms()">Aceptar y pagar</button>
+        <h2>Condiciones de Arriendo del Local</h2>
+        <div class="card" style="font-size: 13px; max-height: 200px; overflow-y: auto; background: #fafafa;">
+            <p><b>1. Política de Cancelación:</b> Cambios permitidos hasta 2 horas antes.</p>
+            <p><b>2. Convivencia:</b> Prohibido ruidos molestos fuera del box o sala.</p>
+            <p><b>3. Entrega:</b> El espacio debe quedar libre y limpio al término de la hora pactada.</p>
+        </div>
+        <label class="check">
+            <input id="acceptTerms" type="checkbox"> <b>Acepto explícitamente las condiciones de este local.</b>
+        </label>
+        <button class="btn green" onclick="confirmTerms()">Aceptar y proceder al Pago</button>
     </section>
+
     <section id="payment" class="screen">
         <button class="btn alt" onclick="go('terms')">← Volver</button>
-        <h2>Pasarela Segura</h2>
-        <div class="summary">
-            <p><b>Lugar:</b> <span id="payPlace"></span></p>
-            <p><b>Espacio:</b> <span id="payRoom"></span></p>
-            <p><b>Detalle:</b> <span id="payBreakdown"></span></p>
-            <p><b>Total Final:</b> <span id="payPrice" class="price"></span></p>
+        <h2>Pasarela Bancaria Segura</h2>
+        <div class="summary" style="background:#f4fbf7;">
+            <p><b>Establecimiento:</b> <span id="payPlace"></span></p>
+            <p><b>Módulo/Sala:</b> <span id="payRoom"></span></p>
+            <p><b>Desglose financiero:</b> <span id="payBreakdown"></span></p>
+            <hr style="border:0; border-top:1px dashed #b5dbbf;">
+            <p style="font-size:16px;"><b>Monto Total a Pagar:</b> <span id="payPrice" class="price"></span></p>
         </div>
-        <button class="btn green" onclick="processPayment()">Pagar y Confirmar</button>
+        
+        <label>Número de Tarjeta</label>
+        <input placeholder="0000 0000 0000 0000" type="text" maxlength="19">
+        <div class="row">
+            <div>
+                <label>Vencimiento</label>
+                <input placeholder="MM/AA" maxlength="5">
+            </div>
+            <div>
+                <label>CVV / Clave</label>
+                <input placeholder="123" type="password" maxlength="3">
+            </div>
+        </div>
+        <button class="btn green" onclick="processPayment()">Autorizar Pago Digital</button>
     </section>
+
     <section id="reminder" class="screen">
         <div style="text-align:center; font-size:44px;">✅</div>
-        <h2>¡Reserva Confirmada!</h2>
+        <h2>¡Reserva Procesada y Pagada!</h2>
         <div class="card" style="border: 2px dashed #62bd4e; background:#f9fff9;">
             <strong>🔗 Código para Invitados</strong>
-            <p class="small">Comparte este token para el registro de tus acompañantes:</p>
+            <p class="small">Comparte este token para el registro de tus acompañantes en recepción:</p>
             <div style="font-size:20px; font-weight:900; text-align:center; color:#12324d;" id="guestCodeBox">INV-9921</div>
         </div>
-        <button class="btn alt" onclick="simulateExport('Google Calendar')">📅 Sincronizar Calendario</button>
-        <button class="btn" onclick="go('code')">Ver Pase QR</button>
+        <button class="btn alt" onclick="simulateExport('Google Calendar')">📅 Sincronizar Calendario Móvil</button>
+        <button class="btn" onclick="go('code')">Ver Pase QR Acceso</button>
     </section>
+
     <section id="code" class="screen">
-        <h2>Pase QR</h2>
+        <h2>Pase de Acceso QR</h2>
         <div class="qrbox"><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcIAAAHCAQAAAABUY/ToAAADnUlEQVR4nO2cy23kMAyGf64MzFEGUsCUYnewJQUpKR1YpaSABazjADK4B4p+5XHIZjDj2Z8Hw68PsgCC4ksWxfck/fomCJAkSZIkSZIkSd4fKVUaAJhE+iwi0gLSZxHADyb9jb+W5F2SnaqqjgBSG1RfzmXzViyQHkFVVXVLfn9Mkg9GZrcv3TiJPL810CE30CGqAvlkmuOm6tZfS/KuydQCOiAoOr2I9Lmub9cck+Shyeb9raC2eNkZCpB+l0aRf2pMko9Fug5FBZAB6capARCKpn4SRX4qQK6vrROSx5onyauTSWogZr5PNwLyPAaVHsvZZGHZ7b+W5F2RZmAW+6LIk2hqA4B4EaQWUpexuC2LHGueJK9HwsL1TsvsSRfUy1gPAILa5SLDseZJ8npkVQsL4WMBEAt0AFx9orpejYDqGNSSSdQhki7VDo2be0NURTcGO+gQXc2qlaIOkVyJp56D2yEEy1hXAzW/aJozL2jUIZIu6/LFrEid+0h+uVnfaIdIrsXjsvxUBPGPAPmkAgCaBED3ejIrJZ1OzfL0aPMkeT1yHZepO0DmSS+r2mAZ6zA7RbRDJBdZ7JBK9YcATb1nElMfCoBJFJjEgrPbfS3JeyTf5YfMBEVvBQEAxvYkvxSP7YNupCqNB/3B3W6uZSQ/JSfrY5QesAYQAEH15ewBvjlKmfUykntZxfbdkhCKNReE2bG2s2F571jzJHk9cvaHqiKpjq40c9EMqwiN+SGSe/H+ofxUTInSb2s/K4LcQoCTCuIIq9t3I5gfIvkxGQuQfF+HedL+2Pkl0qfYlzxZPMneT1ybueYKxwWoa17P+BoKNoed2WpMEpPkR16eD55ojHMJ1tPWNStkzfYTbofYpZ/6eC9E8ktSnrXAWjw63yu93q3I3g+S72Rvh+by/KLO6vT9gXbI0B/W3e7vkeRDkv0mO6RS/SFAU+ZZxNSHAmASBSYx4Gx3X0vyHsl3+SHzwYV2CD9mPmhIdwNfN88f6pSWhO2UfWwH2mGSD5rs/KHqRGNztqQhAa5lJPeyLZPpUhFbbY70f+p9HbYm+bEwy8X6133Zby8vT7wYf8PNoS3bC+lpLgPkygXbL8Vje3N6YI8kv9Scl/NFanPQWwMdcAnS+WB9+jpgEruHeGGOkeRDktt62vpmhczZDrRDRD4pWf6fTf9wIJorZgAAAABJRU5ErkJoggling='></div>
         <button class="btn dark" onclick="go('history')">Ir a mis Reservas</button>
     </section>
+
     <section id="history" class="screen">
-        <h2>Mis Reservas</h2>
+        <h2>Mis Órdenes de Arriendo</h2>
         <div class="card" style="border-left: 5px solid #ff9800;">
             <div class="row"><b>Por Calificar</b> <span class="rating" style="background:#fff3e0; padding:2px 6px; border-radius:6px; font-size:11px;">Obligatorio</span></div>
-            <p><b>Sala Multiuso B</b></p>
-            <button class="btn green" style="padding:10px; font-size:13px;" onclick="openReviewFlow('Sala Multiuso B')">⭐ Evaluar Espacio</button>
+            <p><b>Sala Multiuso B</b> · Campus Hub Temuco</p>
+            <button class="btn green" style="padding:10px; font-size:13px;" onclick="openReviewFlow('Sala Multiuso B')">⭐ Evaluar Espacio Usado</button>
         </div>
         <div class="card" style="opacity:0.8;">
             <div class="row"><b>Activa</b> <span style="color:#1677bd;">Confirmado</span></div>
             <p><span id="historyPlace">Cowork Centro</span> · <span id="historyRoom">Box Privado 1</span></p>
         </div>
+        <nav class="nav">
+            <button onclick="go('map')">🗺️ Mapa</button>
+            <button class="active" onclick="go('history')">📂 Reservas</button>
+            <button onclick="go('roleSelection')">🔄 Cambiar Rol</button>
+        </nav>
     </section>
+
     <section id="review" class="screen">
         <h2>Evalúa tu Experiencia</h2>
         <p>Es <b>obligatorio</b> calificar tu uso de: <i id="reviewTargetName">Sala</i>.</p>
@@ -185,38 +269,313 @@
             <span onclick="setRatingScore(1)">★</span><span onclick="setRatingScore(2)">★</span><span onclick="setRatingScore(3)">★</span><span onclick="setRatingScore(4)">★</span><span onclick="setRatingScore(5)">★</span>
         </div>
         <p class="small" style="text-align:center; color:#e95a5a; font-weight:bold; display:none;" id="ratingValidationError">¡Debes seleccionar estrellas para enviar!</p>
-        <textarea id="reviewComment" placeholder="Comentario (Opcional)"></textarea>
-        <button class="btn green" onclick="submitReviewData()">Enviar Evaluación</button>
+        
+        <label>Escribe tu comentario o recomendación</label>
+        <textarea id="reviewComment" placeholder="Cuéntanos qué tal la limpieza, internet o comodidad..."></textarea>
+        
+        <button class="btn green" onclick="submitReviewData()">Publicar Evaluación de Espacio</button>
     </section>
+
+    <section id="adminPanel" class="screen">
+        <h2>Panel de Gestión Comercial</h2>
+        <p class="small">Controla la disponibilidad e ingresos de tus locales.</p>
+        
+        <div class="row" style="gap:10px; margin: 10px 0;">
+            <div class="card" style="flex:1; margin:0; text-align:center; padding:10px;">
+                <span class="small">Ganancias Mes</span>
+                <h3 style="color:#62bd4e; font-size:18px; margin-top:5px;">$340.000</h3>
+            </div>
+            <div class="card" style="flex:1; margin:0; text-align:center; padding:10px;">
+                <span class="small">Reservas Activas</span>
+                <h3 style="color:#1677bd; font-size:18px; margin-top:5px;">14</h3>
+            </div>
+        </div>
+
+        <label style="margin-top:15px;">Mis Espacios Ofrecidos</label>
+        
+        <div class="card" style="background: white;">
+            <div class="row">
+                <div>
+                    <h3>Sala de Reuniones Ejecutiva</h3>
+                    <p class="small">Base: $12.000/h · 8 personas</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked onchange="toggleRoomAvailability('Sala Ejecutiva', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="card" style="background: white;">
+            <div class="row">
+                <div>
+                    <h3>Box Privado Individual</h3>
+                    <p class="small">Base: $6.000/h · 2 personas</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked onchange="toggleRoomAvailability('Box Individual', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="card" style="background: #fff7e6; border: 1px solid #ffe1a8;">
+            <h3>⭐ Reseñas Recientes de Clientes</h3>
+            <p class="small"><i>"Excelente espacio, muy buena iluminación, pero el café podría estar más caliente."</i></p>
+            <span class="rating">★★★★☆ (4.0) - Por: Valentina V.</span>
+        </div>
+
+        <nav class="nav">
+            <button class="active" onclick="go('adminPanel')">📊 Mi Panel</button>
+            <button onclick="go('roleSelection')">🔄 Cambiar de Rol</button>
+        </nav>
+    </section>
+
+    <div id="commentsModal" class="modal">
+        <div class="modalbox">
+            <h2>Reseñas de la Comunidad</h2>
+            <p class="small">Comentarios y notas recolectadas de este establecimiento.</p>
+            <hr style="border:0; border-top: 1px solid #eee; margin: 10px 0;">
+            
+            <div id="commentsContainer">
+                </div>
+            
+            <button class="btn dark" style="margin-top:15px;" onclick="closeModal('commentsModal')">Cerrar Historial</button>
+        </div>
+    </div>
+
     <div id="infoModal" class="modal"><div class="modalbox"><h2 id="modalTitle">Aviso</h2><p id="modalText"></p><button class="btn" onclick="closeModal('infoModal')">Cerrar</button></div></div>
 </div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     let map, markersLayer, currentRatingScore = 0;
+    
+    // Base de Datos Maestra con Comentarios Incluidos por Local
     const dataEspacios = {
-        temuco: { center: [-38.7396, -72.5903], places: [{ id: 't1', name: 'Cowork Centro Temuco', coords: [-38.7385, -72.5930], rating: '4.8', details: 'Av. Alemania', basePrice: 6000 }] },
-        santiago: { center: [-33.4168, -70.6067], places: [{ id: 's1', name: 'Providencia FlexHub', coords: [-33.4180, -70.6050], rating: '4.9', details: 'Metro Tobalaba', basePrice: 12000 }] },
-        concepcion: { center: [-36.8261, -73.0498], places: [{ id: 'c1', name: 'BioBío Tech Cowork', coords: [-36.8250, -73.0470], rating: '4.5', details: 'Plaza Perú', basePrice: 5500 }] }
+        temuco: { 
+            center: [-38.7396, -72.5903], 
+            places: [{ 
+                id: 't1', 
+                name: 'Cowork Centro Temuco', 
+                coords: [-38.7385, -72.5930], 
+                rating: '4.8', 
+                details: 'Av. Alemania', 
+                basePrice: 6000,
+                reviews: [
+                    { stars: 5, user: "Carlos M.", text: "Excelente aislamiento acústico, ideal para reuniones de proyectos." },
+                    { stars: 4, user: "Ana P.", text: "Muy buena ubicación, la conexión a internet es rapidísima." }
+                ]
+            }] 
+        },
+        santiago: { 
+            center: [-33.4168, -70.6067], 
+            places: [{ 
+                id: 's1', 
+                name: 'Providencia FlexHub', 
+                coords: [-33.4180, -70.6050], 
+                rating: '4.9', 
+                details: 'Metro Tobalaba', 
+                basePrice: 12000,
+                reviews: [
+                    { stars: 5, user: "Ignacio T.", text: "El monitor 4K extra funciona perfecto. Insumos muy profesionales." }
+                ]
+            }] 
+        },
+        concepcion: { 
+            center: [-36.8261, -73.0498], 
+            places: [{ 
+                id: 'c1', 
+                name: 'BioBío Tech Cowork', 
+                coords: [-36.8250, -73.0470], 
+                rating: '4.5', 
+                details: 'Plaza Perú', 
+                basePrice: 5500,
+                reviews: [
+                    { stars: 4, user: "Marta S.", text: "Espacio cómodo, aunque costó un poco encontrar estacionamiento." }
+                ]
+            }] 
+        }
     };
+    
     const salasPorLugar = [{ name: 'Box Privado', priceMod: 1, info: '2 personas max.' }, { name: 'Sala de Reuniones', priceMod: 2, info: 'Equipada con Proyector.' }];
     let selectedPlaceObj = null, selectedRoomObj = null, selectedExtras = { cafe: 0, galletas: 0 }, preciosExtras = { cafe: 2500, galletas: 3000 };
 
-    window.addEventListener('DOMContentLoaded', () => { setTimeout(() => { const splash = document.getElementById('splash'); splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 600); }, 1000); });
-    function goHome() { go('map'); if (!map) { setTimeout(() => initRealMap(false), 200); } }
-    function go(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); const t = document.getElementById(id); if(t) t.classList.add('active'); }
-    function initRealMap(useGPS) { go('map'); if (map) return; map = L.map('mapReal').setView([-38.7396, -72.5903], 14); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); markersLayer = L.layerGroup().addTo(map); renderCityMarkers('temuco'); }
-    function renderCityMarkers(cityName) { if (!markersLayer) return; markersLayer.clearLayers(); const cityData = dataEspacios[cityName]; map.setView(cityData.center, 14); const listDiv = document.getElementById('placesList'); listDiv.innerHTML = ''; cityData.places.forEach(p => { const marker = L.marker(p.coords).addTo(markersLayer); marker.bindPopup(`<b>${p.name}</b>`); marker.on('click', () => bindPlaceSelection(p)); const card = document.createElement('div'); card.className = 'place'; card.onclick = () => bindPlaceSelection(p); card.innerHTML = `<div class="row"><h3>${p.name}</h3><span class="rating">★ ${p.rating}</span></div><p class="small">${p.details}</p><span class="price">Desde $${p.basePrice}/h</span>`; listDiv.appendChild(card); }); }
-    function changeCity() { renderCityMarkers(document.getElementById('citySearch').value); }
-    function bindPlaceSelection(placeObj) { selectedPlaceObj = placeObj; document.getElementById('placeTitle').textContent = placeObj.name; const container = document.getElementById('roomsList'); container.innerHTML = ''; salasPorLugar.forEach(sala => { const finalPrice = Math.round(placeObj.basePrice * sala.priceMod); const el = document.createElement('div'); el.className = 'room'; el.onclick = () => { selectedRoomObj = { name: sala.name, price: finalPrice }; document.getElementById('roomTitle').textContent = sala.name; document.getElementById('roomPrice').textContent = `$${finalPrice}/h`; go('schedule'); }; el.innerHTML = `<div class="row"><h3>${sala.name}</h3><span class="rating">★ ${placeObj.rating}</span></div><p class="small">${sala.info}</p><span class="price">$${finalPrice}/h</span>`; container.appendChild(el); }); go('rooms'); }
-    function selectTime(el) { document.querySelectorAll('.time').forEach(t => t.classList.remove('on')); el.classList.add('on'); }
-    function updateExtra(type, val) { let c = selectedExtras[type] || 0; c += val; if(c < 0) c = 0; selectedExtras[type] = c; document.getElementById(`count-${type}`).textContent = c; let total = 0; for (let k in selectedExtras) total += selectedExtras[k] * preciosExtras[k]; document.getElementById('extraTotalText').textContent = `$${total}`; }
-    function confirmTerms() { if (!document.getElementById('acceptTerms').checked) { showAlertModal('Aviso', 'Debes aceptar las condiciones.'); return; } document.getElementById('payPlace').textContent = selectedPlaceObj.name; document.getElementById('payRoom').textContent = selectedRoomObj.name; let totalExtras = 0; for (let k in selectedExtras) totalExtras += selectedExtras[k] * preciosExtras[k]; const grandTotal = selectedRoomObj.price + totalExtras; document.getElementById('payBreakdown').textContent = `Base: $${selectedRoomObj.price} + Extras: $${totalExtras}`; document.getElementById('payPrice').textContent = `$${grandTotal}`; go('payment'); }
-    function processPayment() { document.getElementById('guestCodeBox').textContent = "INV-" + Math.floor(1000 + Math.random() * 9000); go('reminder'); }
+    window.addEventListener('DOMContentLoaded', () => { 
+        setTimeout(() => { 
+            const splash = document.getElementById('splash'); 
+            splash.style.opacity = '0'; 
+            setTimeout(() => splash.style.display = 'none', 600); 
+        }, 1000); 
+    });
+
+    function goHome() { 
+        go('roleSelection'); 
+    }
+
+    function go(id) { 
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
+        const t = document.getElementById(id); 
+        if(t) t.classList.add('active'); 
+    }
+
+    // Manejo de Roles (Usuario manda a mapa, Prestador a panel de administración)
+    function setRole(role) {
+        if(role === 'user') {
+            go('permission');
+        } else if(role === 'provider') {
+            go('adminPanel');
+        }
+    }
+
+    function initRealMap(useGPS) { 
+        go('map'); 
+        if (map) return; 
+        map = L.map('mapReal').setView([-38.7396, -72.5903], 14); 
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); 
+        markersLayer = L.layerGroup().addTo(map); 
+        renderCityMarkers('temuco'); 
+    }
+
+    function renderCityMarkers(cityName) { 
+        if (!markersLayer) return; 
+        markersLayer.clearLayers(); 
+        const cityData = dataEspacios[cityName]; 
+        map.setView(cityData.center, 14); 
+        const listDiv = document.getElementById('placesList'); 
+        listDiv.innerHTML = ''; 
+        cityData.places.forEach(p => { 
+            const marker = L.marker(p.coords).addTo(markersLayer); 
+            marker.bindPopup(`<b>${p.name}</b>`); 
+            marker.on('click', () => bindPlaceSelection(p)); 
+            const card = document.createElement('div'); 
+            card.className = 'place'; 
+            card.onclick = () => bindPlaceSelection(p); 
+            card.innerHTML = `<div class="row"><h3>${p.name}</h3><span class="rating">★ ${p.rating}</span></div><p class="small">${p.details}</p><span class="price">Desde $${p.basePrice}/h</span>`; 
+            listDiv.appendChild(card); 
+        }); 
+    }
+
+    function changeCity() { 
+        renderCityMarkers(document.getElementById('citySearch').value); 
+    }
+
+    // Configuración de Local y Carga de cantidad de reseñas
+    function bindPlaceSelection(placeObj) { 
+        selectedPlaceObj = placeObj; 
+        document.getElementById('placeTitle').textContent = placeObj.name; 
+        document.getElementById('placeReviewsCount').textContent = `Basado en ${placeObj.reviews.length} opiniones registradas.`;
+        
+        const container = document.getElementById('roomsList'); 
+        container.innerHTML = ''; 
+        salasPorLugar.forEach(sala => { 
+            const finalPrice = Math.round(placeObj.basePrice * sala.priceMod); 
+            const el = document.createElement('div'); 
+            el.className = 'room'; 
+            el.onclick = () => { 
+                selectedRoomObj = { name: sala.name, price: finalPrice }; 
+                document.getElementById('roomTitle').textContent = sala.name; 
+                document.getElementById('roomPrice').textContent = `$${finalPrice}/h`; 
+                go('schedule'); 
+            }; 
+            el.innerHTML = `<div class="row"><h3>${sala.name}</h3><span class="rating">★ ${placeObj.rating}</span></div><p class="small">${sala.info}</p><span class="price">$${finalPrice}/h</span>`; 
+            container.appendChild(el); 
+        }); 
+        go('rooms'); 
+    }
+
+    // Modal de comentarios históricos del local comercial
+    function openCommentsModal() {
+        if (!selectedPlaceObj) return;
+        const container = document.getElementById('commentsContainer');
+        container.innerHTML = '';
+        
+        selectedPlaceObj.reviews.forEach(r => {
+            const div = document.createElement('div');
+            div.className = 'review-item';
+            div.innerHTML = `
+                <div class="row"><strong>${r.user}</strong> <span class="rating">${'★'.repeat(r.stars)}</span></div>
+                <p class="small" style="margin-top:5px; color:#334d5c;">"${r.text}"</p>
+            `;
+            container.appendChild(div);
+        });
+        document.getElementById('commentsModal').classList.add('show');
+    }
+
+    function selectTime(el) { 
+        document.querySelectorAll('.time').forEach(t => t.classList.remove('on')); 
+        el.classList.add('on'); 
+    }
+
+    function updateExtra(type, val) { 
+        let c = selectedExtras[type] || 0; 
+        c += val; if(c < 0) c = 0; 
+        selectedExtras[type] = c; 
+        document.getElementById(`count-${type}`).textContent = c; 
+        let total = 0; 
+        for (let k in selectedExtras) total += selectedExtras[k] * preciosExtras[k]; 
+        document.getElementById('extraTotalText').textContent = `$${total.toLocaleString('es-CL')}`; 
+    }
+
+    // Validación de aceptación de términos del local antes del pago
+    function confirmTerms() { 
+        if (!document.getElementById('acceptTerms').checked) { 
+            showAlertModal('Términos Requeridos', 'Para avanzar, debes marcar la casilla confirmando que aceptas las condiciones del local.'); 
+            return; 
+        } 
+        document.getElementById('payPlace').textContent = selectedPlaceObj.name; 
+        document.getElementById('payRoom').textContent = selectedRoomObj.name; 
+        let totalExtras = 0; 
+        for (let k in selectedExtras) totalExtras += selectedExtras[k] * preciosExtras[k]; 
+        const grandTotal = selectedRoomObj.price + totalExtras; 
+        document.getElementById('payBreakdown').textContent = `Base: $${selectedRoomObj.price.toLocaleString('es-CL')} + Insumos Extras: $${totalExtras.toLocaleString('es-CL')}`; 
+        document.getElementById('payPrice').textContent = `$${grandTotal.toLocaleString('es-CL')}`; 
+        go('payment'); 
+    }
+
+    function processPayment() { 
+        document.getElementById('guestCodeBox').textContent = "INV-" + Math.floor(1000 + Math.random() * 9000); 
+        go('reminder'); 
+    }
+
     function simulateExport(p) { showAlertModal('Éxito', `Sincronizado con ${p}`); }
-    function openReviewFlow(name) { document.getElementById('reviewTargetName').textContent = name; currentRatingScore = 0; document.querySelectorAll('#starsContainer span').forEach(s => s.classList.remove('on')); go('review'); }
-    function setRatingScore(score) { currentRatingScore = score; document.getElementById('ratingValidationError').style.display = 'none'; document.querySelectorAll('#starsContainer span').forEach((s, idx) => s.classList.toggle('on', idx < score)); }
-    function submitReviewData() { if (currentRatingScore === 0) { document.getElementById('ratingValidationError').style.display = 'block'; return; } showAlertModal('Gracias', 'Evaluación enviada.'); go('map'); }
-    function showAlertModal(title, msg) { document.getElementById('modalTitle').textContent = title; document.getElementById('modalText').textContent = msg; document.getElementById('infoModal').classList.add('show'); }
+    
+    // Flujo obligatorio de Feedback
+    function openReviewFlow(name) { 
+        document.getElementById('reviewTargetName').textContent = name; 
+        currentRatingScore = 0; 
+        document.querySelectorAll('#starsContainer span').forEach(s => s.classList.remove('on')); 
+        document.getElementById('reviewComment').value = '';
+        go('review'); 
+    }
+
+    function setRatingScore(score) { 
+        currentRatingScore = score; 
+        document.getElementById('ratingValidationError').style.display = 'none'; 
+        document.querySelectorAll('#starsContainer span').forEach((s, idx) => s.classList.toggle('on', idx < score)); 
+    }
+
+    function submitReviewData() { 
+        if (currentRatingScore === 0) { 
+            document.getElementById('ratingValidationError').style.display = 'block'; 
+            return; 
+        } 
+        showAlertModal('Gracias', 'Tu comentario y nota obligatoria han sido publicados exitosamente en el feed del establecimiento.'); 
+        go('map'); 
+    }
+
+    // Función del Administrador (Cambio de estado del espacio)
+    function toggleRoomAvailability(roomName, isChecked) {
+        const state = isChecked ? "Activa y visible" : "Pausada de inmediato";
+        showAlertModal('Inventario Actualizado', `La sala "${roomName}" ahora cambió a estado: ${state}.`);
+    }
+
+    function showAlertModal(title, msg) { 
+        document.getElementById('modalTitle').textContent = title; 
+        document.getElementById('modalText').textContent = msg; 
+        document.getElementById('infoModal').classList.add('show'); 
+    }
+
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 </script>
 </body>
