@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>ReserveX V3.4 - Profesional</title>
+    <title>ReserveX V3.5 - Profesional Todo Chile</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
@@ -46,7 +46,7 @@
         .nav button { border: 0; background: transparent; color: #6b7e8d; font-weight: 800; font-size: 11px; cursor: pointer; }
         .nav button.active { color: #1677bd; }
         
-        /* Buscador Todo Chile */
+        /* Contenedor de Buscador Avanzado */
         .search-container { position: relative; width: 100%; margin-bottom: 8px; }
         .suggestions-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #dceaf4; border-radius: 10px; z-index: 1000; max-height: 180px; overflow-y: auto; display: none; box-shadow: 0 4px 12px #0002; }
         .suggestion-item { padding: 11px 14px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f0f6fa; }
@@ -75,9 +75,9 @@
         .modal.show { display: flex; }
         .modalbox { background: white; border-radius: 26px; padding: 22px; width: 100%; box-shadow: 0 16px 60px #0004; max-height: 85%; overflow-y: auto; }
         
-        /* Contenedor del QR Real */
-        .qrbox { background: white; border: 1px solid #e1e9ef; border-radius: 22px; padding: 20px; margin: 12px 0; text-align: center; display: flex; justify-content: center; align-items: center; }
-        .qrbox img { width: 180px; height: 180px; display: block; }
+        /* Contenedor del QR Real Validado */
+        .qrbox { background: #fff; border: 2px dashed #1677bd; border-radius: 22px; padding: 15px; margin: 15px auto; text-align: center; width: 200px; height: 200px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px #0001; }
+        .qrbox img { width: 170px; height: 170px; display: block; object-fit: contain; }
         
         .code { font-size: 24px; letter-spacing: 4px; text-align: center; font-weight: 900; color: #12324d; background: #eef3f7; padding: 10px; border-radius: 16px; margin: 8px 0; }
         .stars { display: flex; justify-content: center; gap: 8px; font-size: 34px; margin: 10px 0; }
@@ -98,7 +98,7 @@
 <body>
 <div class="phone">
     <div id="splash"><div class="splash-logo">✓</div><h2 style="margin-top:20px; color:white;">ReserveX</h2><p style="color:#e2ecf4;">Cargando ecosistema...</p></div>
-    <div class="status"><span>9:41</span><strong>ReserveX Pro v3.4</strong><span>●●●</span></div>
+    <div class="status"><span>9:41</span><strong>ReserveX Pro v3.5</strong><span>●●●</span></div>
     <div class="app-header">
         <div class="logo" style="margin:0;"><div class="mark" style="width:30px; height:30px; border-radius:8px; font-size:14px;">✓</div><div class="brand" style="font-size:18px;">Reserve<span>X</span></div></div>
         <button class="btn-home" onclick="goHome()">🏠 Inicio</button>
@@ -122,7 +122,7 @@
         </div>
         <div class="card">
             <h3>🏢 Perfil Prestador (Dueño)</h3>
-            <p class="small">Ver tu balance acumulado y retirar tus ingresos con el descuento automático de comisión por espacio.</p>
+            <p class="small">Ver tu balance acumulado y retirar tus ingresos con el descuento de comisión promedio del mercado.</p>
             <button class="btn dark" onclick="setRole('provider')">Ingresar como Prestador</button>
         </div>
     </section>
@@ -138,7 +138,7 @@
         <h2>Explorar Co-Works</h2>
         
         <div class="search-container">
-            <input type="text" id="citySearchInput" placeholder="🔍 Busca cualquier ciudad o comuna de Chile..." oninput="searchChileCities()">
+            <input type="text" id="citySearchInput" placeholder="🔍 Escribe CUALQUIER ciudad o comuna de Chile..." oninput="searchChileCities()">
             <div id="suggestions" class="suggestions-box"></div>
         </div>
 
@@ -238,13 +238,13 @@
 
     <section id="code" class="screen">
         <h2>Pase de Acceso QR</h2>
-        <p class="small">Presenta este código al llegar al establecimiento para registrar tu ingreso automático.</p>
+        <p class="small">Muestra este código en la conserjería o tótem del establecimiento para validar el ingreso comercial.</p>
         
         <div class="qrbox">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ReserveX-AccessCode-RX9921" alt="Código QR de Validación">
+            <img id="realQRCodeImage" src="https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=ReserveX-Valid-Booking-Code-RX4821" alt="Código QR Real">
         </div>
         
-        <div class="code">RX-TEM-2026</div>
+        <div class="code" id="finalCodeIndicator">RX-GEN-2026</div>
         <button class="btn dark" onclick="go('history')">Ir a mis Reservas</button>
     </section>
 
@@ -266,7 +266,7 @@
         <h2>Evalúa tu Experiencia</h2>
         <p>Es <b>obligatorio</b> calificar tu uso de: <i id="reviewTargetName">Sala</i>.</p>
         <div class="stars" id="starsContainer">
-            <span onclick="setRatingScore(1)">★</span><span onclick="setRatingScore(2)">★</span><span onclick="setRatingScore(3)">★</span><span onclick="setRatingScore(4)">★</span><span onclick="setRatingScore(5)">★</span>
+            <span onclick="setRatingScore(1)">★</span><span onclick="setRatingScore(2 desertar(2))">★</span><span onclick="setRatingScore(3)">★</span><span onclick="setRatingScore(4)">★</span><span onclick="setRatingScore(5)">★</span>
         </div>
         <p class="small" style="text-align:center; color:#e95a5a; font-weight:bold; display:none;" id="ratingValidationError">¡Debes seleccionar estrellas para enviar!</p>
         <textarea id="reviewComment" placeholder="Comentario (Opcional)"></textarea>
@@ -283,8 +283,8 @@
                 <h3 style="color:#62bd4e; font-size:18px; margin-top:5px;" id="adminBalanceText">$450.000</h3>
             </div>
             <div class="card" style="flex:1; margin:0; text-align:center; padding:10px;">
-                <span class="small">Comisión Espacio</span>
-                <h3 style="color:#e95a5a; font-size:15px; margin-top:5px;">12%</h3>
+                <span class="small">Comisión Marketplace</span>
+                <h3 style="color:#e95a5a; font-size:15px; margin-top:5px;">15% (MKT)</h3>
             </div>
         </div>
 
@@ -310,26 +310,26 @@
     <div id="withdrawalModal" class="modal">
         <div class="modalbox">
             <h2>Retirar Ganancias</h2>
-            <p class="small">Retira tus fondos. Se aplicará una comisión del 12% por uso del espacio.</p>
+            <p class="small">Se aplicará el cargo por uso de espacio de corretaje digital promedio del mercado chileno (15%).</p>
             
-            <label>Monto Bruto a Retirar ($)</label>
-            <input type="number" id="withdrawAmount" placeholder="Ej: 100000" oninput="calculatePlatformFee()">
+            <label>Monto Bruto a Liquidar ($)</label>
+            <input type="number" id="withdrawAmount" placeholder="Ej: 200000" oninput="calculateMarketFee()">
             
             <div class="card" style="background:#fdf1f2; border:1px solid #fbcbd0; font-size:12px; margin: 8px 0; padding:10px;">
-                <div class="row"><span>Comisión Plataforma (12%):</span><span id="feeAmountText" style="color:#e95a5a; font-weight:bold;">$0</span></div>
-                <div class="row" style="margin-top:5px; font-size:13px; font-weight:bold;"><span>Líquido a recibir en cuenta:</span><span id="netAmountText" style="color:#62bd4e;">$0</span></div>
+                <div class="row"><span>Comisión de Uso (15%):</span><span id="feeAmountText" style="color:#e95a5a; font-weight:bold;">$0</span></div>
+                <div class="row" style="margin-top:5px; font-size:13px; font-weight:bold;"><span>Líquido Neto a recibir:</span><span id="netAmountText" style="color:#62bd4e;">$0</span></div>
             </div>
             
-            <label>Banco Destino</label>
+            <label>Banco de Destino</label>
             <select>
                 <option>BancoEstado</option>
-                <option>Banco de Chile</option>
+                <option>Banco de Chile / Edwards</option>
                 <option>Banco Santander</option>
             </select>
-            <label>Número de Cuenta</label>
+            <label>Número de Cuenta Comercial</label>
             <input placeholder="123456789" type="text">
             
-            <button class="btn green" onclick="executeWithdrawal()">Confirmar y Transferir</button>
+            <button class="btn green" onclick="executeWithdrawal()">Confirmar Transferencia</button>
             <button class="btn alt" onclick="closeModal('withdrawalModal')">Cancelar</button>
         </div>
     </div>
@@ -342,11 +342,6 @@
     let map, markersLayer, currentRatingScore = 0;
     let prestadorSaldo = 450000; 
 
-    // Base de datos dinámica inicial
-    const dataEspacios = {
-        general: { name: "Espacio Genérico", coords: [0,0], rating: '4.6', details: 'Centro Comercial', basePrice: 7000, reviews: [{ stars: 5, user: "Cliente Frecuente", text: "Muy cómodo." }] }
-    };
-    
     const salasPorLugar = [{ name: 'Box Privado', priceMod: 1, info: '2 personas max.' }, { name: 'Sala de Reuniones', priceMod: 2, info: 'Equipada con Proyector.' }];
     let selectedPlaceObj = null, selectedRoomObj = null, selectedExtras = { cafe: 0, galletas: 0 }, preciosExtras = { cafe: 2500, galletas: 3000 };
 
@@ -368,17 +363,16 @@
         map = L.map('mapReal').setView([-38.7396, -72.5903], 13); 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); 
         markersLayer = L.layerGroup().addTo(map); 
-        injectLocalMarker("Cowork Inovación Temuco", [-38.7385, -72.5930], 6000);
+        injectLocalMarker("Cowork Innovación Temuco", [-38.7385, -72.5930], 6000);
     }
 
-    // BUSCADOR REAL CONECTADO A API DE OPENSTREETMAP (TODO CHILE)
+    // BUSCADOR LIBRE: CONEXIÓN ABIERTA PARA CONSULTAR CUALQUIER PUNTO DE CHILE
     async function searchChileCities() {
         const query = document.getElementById('citySearchInput').value;
         const suggestionsBox = document.getElementById('suggestions');
         
         if (query.length < 3) { suggestionsBox.style.display = 'none'; return; }
         
-        // Consultar la API oficial para buscar cualquier rincón de Chile
         const url = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=cl&q=${encodeURIComponent(query)}`;
         
         try {
@@ -390,8 +384,7 @@
                 data.slice(0, 5).forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'suggestion-item';
-                    // Acortar el texto para que calce estéticamente en la pantalla móvil
-                    div.textContent = item.display_name.split(',').slice(0, 2).join(',');
+                    div.textContent = item.display_name.split(',').slice(0, 3).join(',');
                     div.onclick = () => {
                         document.getElementById('citySearchInput').value = div.textContent;
                         suggestionsBox.style.display = 'none';
@@ -400,8 +393,7 @@
                         const lon = parseFloat(item.lon);
                         map.setView([lat, lon], 14);
                         
-                        // Crear un espacio comercial simulado dinámicamente en esa nueva ciudad de Chile
-                        injectLocalMarker(`Hub Comercial - ${item.name || 'Centro'}`, [lat, lon], 7500);
+                        injectLocalMarker(`Hub Comercial - ${item.name || 'Zona Centro'}`, [lat, lon], 6800);
                     };
                     suggestionsBox.appendChild(div);
                 });
@@ -410,7 +402,7 @@
                 suggestionsBox.style.display = 'none';
             }
         } catch (error) {
-            console.log("Error buscando locación:", error);
+            console.log("Error consultando cartografía:", error);
         }
     }
 
@@ -420,13 +412,8 @@
         marker.bindPopup(`<b>${name}</b>`).openPopup();
         
         const mockPlace = {
-            id: 'dinamico',
-            name: name,
-            coords: coords,
-            rating: '4.7',
-            details: 'Espacio disponible listo para reservar',
-            basePrice: price,
-            reviews: [{ stars: 5, user: "Ignacio R.", text: "Muy buena señal de internet y limpieza impecable." }]
+            id: 'dinamico', name: name, coords: coords, rating: '4.8', details: 'Espacio comercial listo', basePrice: price,
+            reviews: [{ stars: 5, user: "Marta S.", text: "Muy cómodo, excelente iluminación." }]
         };
         
         marker.on('click', () => bindPlaceSelection(mockPlace));
@@ -436,14 +423,14 @@
         const card = document.createElement('div');
         card.className = 'place';
         card.onclick = () => bindPlaceSelection(mockPlace);
-        card.innerHTML = `<div class="row"><h3>${name}</h3><span class="rating">★ 4.7</span></div><p class="small">Disponible en tu rango seleccionado</p><span class="price">Desde $${price}/h</span>`; 
+        card.innerHTML = `<div class="row"><h3>${name}</h3><span class="rating">★ 4.8</span></div><p class="small">Espacio verificado en este cuadrante</p><span class="price">Desde $${price}/h</span>`; 
         listDiv.appendChild(card);
     }
 
     function bindPlaceSelection(placeObj) { 
         selectedPlaceObj = placeObj; 
         document.getElementById('placeTitle').textContent = placeObj.name; 
-        document.getElementById('placeReviewsCount').textContent = `Basado en ${placeObj.reviews.length} opiniones registradas.`;
+        document.getElementById('placeReviewsCount').textContent = `Basado en ${placeObj.reviews.length} opiniones de clientes.`;
         
         const container = document.getElementById('roomsList'); 
         container.innerHTML = ''; 
@@ -495,7 +482,13 @@
     }
 
     function processPayment() { 
+        const bookingID = "RX-" + Math.floor(1000 + Math.random() * 9000);
         document.getElementById('guestCodeBox').textContent = "INV-" + Math.floor(1000 + Math.random() * 9000); 
+        document.getElementById('finalCodeIndicator').textContent = bookingID;
+        
+        // Cargar QR Real Dinámico usando la API QRServer basada en el código de reserva único
+        document.getElementById('realQRCodeImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=ReserveX-Booking-${bookingID}`;
+        
         go('reminder'); 
     }
 
@@ -504,7 +497,7 @@
     function submitReviewData() { if (currentRatingScore === 0) { document.getElementById('ratingValidationError').style.display = 'block'; return; } showAlertModal('Gracias', 'Evaluación enviada.'); go('map'); }
     function toggleRoomAvailability(r, ch) { showAlertModal('Inventario', `Estado de ${r} modificado.`); }
     
-    // CONTROL DEL ADMINISTRADOR: CÁLCULO DE COMISIONES POR USO DEL ESPACIO
+    // CONTROL DEL PRESTADOR: ARREGLADO CON COMISIÓN DE MERCADO DE REFERENCIA DEL 15%
     function openWithdrawalModal() { 
         document.getElementById('withdrawAmount').value = '';
         document.getElementById('feeAmountText').textContent = '$0';
@@ -512,9 +505,9 @@
         document.getElementById('withdrawalModal').classList.add('show'); 
     }
     
-    function calculatePlatformFee() {
+    function calculateMarketFee() {
         const amt = parseInt(document.getElementById('withdrawAmount').value) || 0;
-        const fee = Math.round(amt * 0.12); // Comisión del 12% por uso del espacio
+        const fee = Math.round(amt * 0.15); // Comisión real ponderada de mercado (15%)
         const net = amt - fee;
         
         document.getElementById('feeAmountText').textContent = `$${fee.toLocaleString('es-CL')}`;
@@ -526,13 +519,13 @@
         if(!amt || amt <= 0) { showAlertModal('Error', 'Ingresa un monto de retiro válido.'); return; }
         if(amt > prestadorSaldo) { showAlertModal('Fondos Insuficientes', 'No puedes retirar más del saldo disponible.'); return; }
         
-        const fee = Math.round(amt * 0.12);
+        const fee = Math.round(amt * 0.15);
         const net = amt - fee;
         
         prestadorSaldo -= amt;
         document.getElementById('adminBalanceText').textContent = `$${prestadorSaldo.toLocaleString('es-CL')}`;
         closeModal('withdrawalModal');
-        showAlertModal('Retiro Exitoso', `Solicitud procesada.\n\nMonto Bruto: $${amt.toLocaleString('es-CL')}\nComisión por espacio (12%): -$${fee.toLocaleString('es-CL')}\nLíquido enviado a tu banco: $${net.toLocaleString('es-CL')}`);
+        showAlertModal('Retiro Exitoso', `Transacción liquidada.\n\nMonto Solicitado: $${amt.toLocaleString('es-CL')}\nComisión por espacio (15%): -$${fee.toLocaleString('es-CL')}\nMonto Líquido Transferido: $${net.toLocaleString('es-CL')}`);
     }
 
     function showAlertModal(title, msg) { document.getElementById('modalTitle').textContent = title; document.getElementById('modalText').textContent = msg; document.getElementById('infoModal').classList.add('show'); }
