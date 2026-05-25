@@ -47,14 +47,14 @@
         .nav button { border: 0; background: transparent; color: #6b7e8d; font-weight: 800; font-size: 11px; cursor: pointer; }
         .nav button.active { color: #1677bd; }
         
-        /* Buscador para las 346 comunas de Chile */
+        /* Contenedor del Buscador */
         .search-container { position: relative; width: 100%; margin-bottom: 8px; }
         .suggestions-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #dceaf4; border-radius: 10px; z-index: 1000; max-height: 180px; overflow-y: auto; display: none; box-shadow: 0 4px 12px #0002; }
-        .suggestion-item { padding: 11px 14px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f0f6fa; }
+        .suggestion-item { padding: 11px 14px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f0f6fa; text-align: left; color: #12324d; }
         .suggestion-item:hover { background: #f0f8ff; }
 
         .mapContainer { position: relative; margin: 10px 0; border-radius: 24px; overflow: hidden; border: 1px solid #d8e9f2; }
-        #mapReal { height: 260px; width: 100%; }
+        #mapReal { height: 260px; width: 100%; z-index: 1; }
         
         .place, .room, .extra-item, .review-item { border: 1px solid #dceaf4; border-radius: 18px; padding: 14px; margin: 10px 0; background: white; cursor: pointer; }
         .review-item { cursor: default; background: #fafcfe; }
@@ -76,7 +76,7 @@
         .modal.show { display: flex; }
         .modalbox { background: white; border-radius: 26px; padding: 22px; width: 100%; box-shadow: 0 16px 60px #0004; max-height: 85%; overflow-y: auto; }
         
-        /* Contenedor del QR Real Validado */
+        /* Contenedor del QR Real Validado Nítido */
         .qrbox { background: #fff; border: 2px dashed #1677bd; border-radius: 22px; padding: 15px; margin: 15px auto; text-align: center; width: 200px; height: 200px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px #0001; }
         .qrbox img { width: 170px; height: 170px; display: block; object-fit: contain; }
         
@@ -115,7 +115,7 @@
         <p>Selecciona tu perfil de acceso al ecosistema comercial.</p>
         <div class="card" style="margin-top: 30px;">
             <h3>🙋‍♂️ Perfil Usuario</h3>
-            <p class="small">Buscar por cualquier comuna de Chile, agregar extras y pagar salas de reuniones de forma segura.</p>
+            <p class="small">Buscar por cualquier rincón de Chile, agregar extras y pagar salas de reuniones de forma segura.</p>
             <button class="btn" onclick="setRole('user')">Ingresar como Usuario</button>
         </div>
         <div class="card">
@@ -253,6 +253,10 @@
             <p><b>Sala Multiuso B</b> · Campus Hub Temuco</p>
             <button class="btn green" style="padding:10px; font-size:13px;" onclick="openReviewFlow('Sala Multiuso B')">⭐ Evaluar Espacio Usado</button>
         </div>
+        <div class="card" style="opacity:0.8;">
+            <div class="row"><b>Activa</b> <span style="color:#1677bd;">Confirmado</span></div>
+            <p><span id="historyPlace">Cowork Centro</span> · <span id="historyRoom">Box Privado 1</span></p>
+        </div>
         <nav class="nav">
             <button onclick="go('map')">🗺️ Mapa</button>
             <button class="active" onclick="go('history')">📂 Reservas</button>
@@ -281,7 +285,7 @@
                 <h3 style="color:#62bd4e; font-size:18px; margin-top:5px;" id="adminBalanceText">$450.000</h3>
             </div>
             <div class="card" style="flex:1; margin:0; text-align:center; padding:10px;">
-                <span class="small">Comisión del Mercado</span>
+                <span class="small">Comisión Marketplace</span>
                 <h3 style="color:#e95a5a; font-size:15px; margin-top:5px;">15% (MKT)</h3>
             </div>
         </div>
@@ -352,19 +356,38 @@
     });
 
     function goHome() { go('roleSelection'); }
-    function go(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); const t = document.getElementById(id); if(t) t.classList.add('active'); }
+    
+    // ARREGLO DE BUG DE RENDERIZADO DEL MAPA
+    function go(id) { 
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
+        const t = document.getElementById(id); 
+        if(t) {
+            t.classList.add('active');
+            // Forzar a Leaflet a recalcular sus dimensiones cuando la pantalla pasa a estar activa
+            if(id === 'map' && map) {
+                setTimeout(() => {
+                    map.invalidateSize();
+                }, 50);
+            }
+        }
+    }
+    
     function setRole(role) { if(role === 'user') { go('permission'); } else if(role === 'provider') { go('adminPanel'); } }
 
     function initRealMap(useGPS) { 
         go('map'); 
         if (map) return; 
+        // Inicializar centrado en la Araucanía de forma predeterminada
         map = L.map('mapReal').setView([-38.7396, -72.5903], 13); 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); 
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map); 
         markersLayer = L.layerGroup().addTo(map); 
         injectLocalMarker("Cowork Innovación Temuco", [-38.7385, -72.5930], 6000);
     }
 
-    // BUSCADOR LIBRE DE CHILE: CONSUME LA API GEOGRÁFICA PARA ENCONTRAR LAS 346 COMUNAS
+    // BUSCADOR REAL ABIERTO PARA LAS 346 COMUNAS DE CHILE
     async function searchChileCities() {
         const query = document.getElementById('citySearchInput').value;
         const suggestionsBox = document.getElementById('suggestions');
@@ -389,8 +412,9 @@
                         
                         const lat = parseFloat(item.lat);
                         const lon = parseFloat(item.lon);
-                        map.setView([lat, lon], 14);
                         
+                        go('map');
+                        map.setView([lat, lon], 14);
                         injectLocalMarker(`Hub Comercial - ${item.name || 'Zona Centro'}`, [lat, lon], 6800);
                     };
                     suggestionsBox.appendChild(div);
@@ -483,10 +507,7 @@
         const bookingID = "RX-" + Math.floor(1000 + Math.random() * 9000);
         document.getElementById('guestCodeBox').textContent = "INV-" + Math.floor(1000 + Math.random() * 9000); 
         document.getElementById('finalCodeIndicator').textContent = bookingID;
-        
-        // Carga y renderizado nítido del código QR Real
         document.getElementById('realQRCodeImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=ReserveX-Booking-${bookingID}`;
-        
         go('reminder'); 
     }
 
@@ -495,7 +516,6 @@
     function submitReviewData() { if (currentRatingScore === 0) { document.getElementById('ratingValidationError').style.display = 'block'; return; } showAlertModal('Gracias', 'Evaluación enviada.'); go('map'); }
     function toggleRoomAvailability(r, ch) { showAlertModal('Inventario', `Estado de ${r} modificado.`); }
     
-    // CONTROL DEL PRESTADOR: CÁLCULO CON COMISIÓN FIJADA DEL 15%
     function openWithdrawalModal() { 
         document.getElementById('withdrawAmount').value = '';
         document.getElementById('feeAmountText').textContent = '$0';
@@ -505,7 +525,7 @@
     
     function calculateMarketFee() {
         const amt = parseInt(document.getElementById('withdrawAmount').value) || 0;
-        const fee = Math.round(amt * 0.15); // Cargo promedio de mercado (15%)
+        const fee = Math.round(amt * 0.15); // Cargo real de mercado del 15%
         const net = amt - fee;
         
         document.getElementById('feeAmountText').textContent = `$${fee.toLocaleString('es-CL')}`;
