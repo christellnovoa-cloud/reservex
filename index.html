@@ -16,7 +16,8 @@
         .screen.active { display: flex; flex-direction: column; }
         
         #splash { position: absolute; inset: 0; background: linear-gradient(135deg, #1a9ad6, #64c85c); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: opacity 0.6s ease; }
-        .splash-logo { width: 90px; height: 90px; border-radius: 28px; background: white; display: grid; place-items: center; font-size: 45px; font-weight: 900; color: #1a9ad6; box-shadow: 0 12px 30px #0003; }
+        .splash-logo { width: 90px; height: 90px; border-radius: 28px; background: white; display: grid; place-items: center; font-size: 45px; font-weight: 900; color: #1a9ad6; box-shadow: 0 12px 30px #0003; animation: pulsePop 1.2s infinite alternate; }
+        @keyframes pulsePop { 0% { transform: scale(0.95); } 100% { transform: scale(1.05); } }
         
         h1 { margin: 8px 0; font-size: 26px; font-weight: 900; }
         h2 { margin: 8px 0 14px; font-size: 21px; font-weight: 800; }
@@ -46,7 +47,7 @@
         .nav button { border: 0; background: transparent; color: #6b7e8d; font-weight: 800; font-size: 11px; cursor: pointer; }
         .nav button.active { color: #1677bd; }
         
-        /* Contenedor de Buscador Avanzado */
+        /* Buscador para las 346 comunas de Chile */
         .search-container { position: relative; width: 100%; margin-bottom: 8px; }
         .suggestions-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #dceaf4; border-radius: 10px; z-index: 1000; max-height: 180px; overflow-y: auto; display: none; box-shadow: 0 4px 12px #0002; }
         .suggestion-item { padding: 11px 14px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f0f6fa; }
@@ -90,9 +91,6 @@
         .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
         input:checked + .slider { background-color: #62bd4e; }
         input:checked + .slider:before { transform: translateX(20px); }
-
-        .webpay-header { background: #e20613; color: white; padding: 10px; border-radius: 12px 12px 0 0; font-weight: bold; text-align: center; font-size: 14px; }
-        .webpay-box { border: 2px solid #e20613; border-radius: 14px; padding: 12px; background: #fff; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -117,12 +115,12 @@
         <p>Selecciona tu perfil de acceso al ecosistema comercial.</p>
         <div class="card" style="margin-top: 30px;">
             <h3>🙋‍♂️ Perfil Usuario</h3>
-            <p class="small">Buscar por cualquier rincón de Chile, agregar extras y pagar salas de reuniones de forma segura.</p>
+            <p class="small">Buscar por cualquier comuna de Chile, agregar extras y pagar salas de reuniones de forma segura.</p>
             <button class="btn" onclick="setRole('user')">Ingresar como Usuario</button>
         </div>
         <div class="card">
             <h3>🏢 Perfil Prestador (Dueño)</h3>
-            <p class="small">Ver tu balance acumulado y retirar tus ingresos con el descuento de comisión promedio del mercado.</p>
+            <p class="small">Ver tu balance acumulado y retirar tus ingresos con el descuento de comisión promedio del mercado (15%).</p>
             <button class="btn dark" onclick="setRole('provider')">Ingresar como Prestador</button>
         </div>
     </section>
@@ -138,7 +136,7 @@
         <h2>Explorar Co-Works</h2>
         
         <div class="search-container">
-            <input type="text" id="citySearchInput" placeholder="🔍 Escribe CUALQUIER ciudad o comuna de Chile..." oninput="searchChileCities()">
+            <input type="text" id="citySearchInput" placeholder="🔍 Escribe cualquier ciudad o comuna de Chile..." oninput="searchChileCities()">
             <div id="suggestions" class="suggestions-box"></div>
         </div>
 
@@ -266,7 +264,7 @@
         <h2>Evalúa tu Experiencia</h2>
         <p>Es <b>obligatorio</b> calificar tu uso de: <i id="reviewTargetName">Sala</i>.</p>
         <div class="stars" id="starsContainer">
-            <span onclick="setRatingScore(1)">★</span><span onclick="setRatingScore(2 desertar(2))">★</span><span onclick="setRatingScore(3)">★</span><span onclick="setRatingScore(4)">★</span><span onclick="setRatingScore(5)">★</span>
+            <span onclick="setRatingScore(1)">★</span><span onclick="setRatingScore(2)">★</span><span onclick="setRatingScore(3)">★</span><span onclick="setRatingScore(4)">★</span><span onclick="setRatingScore(5)">★</span>
         </div>
         <p class="small" style="text-align:center; color:#e95a5a; font-weight:bold; display:none;" id="ratingValidationError">¡Debes seleccionar estrellas para enviar!</p>
         <textarea id="reviewComment" placeholder="Comentario (Opcional)"></textarea>
@@ -283,7 +281,7 @@
                 <h3 style="color:#62bd4e; font-size:18px; margin-top:5px;" id="adminBalanceText">$450.000</h3>
             </div>
             <div class="card" style="flex:1; margin:0; text-align:center; padding:10px;">
-                <span class="small">Comisión Marketplace</span>
+                <span class="small">Comisión del Mercado</span>
                 <h3 style="color:#e95a5a; font-size:15px; margin-top:5px;">15% (MKT)</h3>
             </div>
         </div>
@@ -310,14 +308,14 @@
     <div id="withdrawalModal" class="modal">
         <div class="modalbox">
             <h2>Retirar Ganancias</h2>
-            <p class="small">Se aplicará el cargo por uso de espacio de corretaje digital promedio del mercado chileno (15%).</p>
+            <p class="small">Se aplicará el cargo por corretaje digital e infraestructura promedio del mercado chileno (15%).</p>
             
             <label>Monto Bruto a Liquidar ($)</label>
             <input type="number" id="withdrawAmount" placeholder="Ej: 200000" oninput="calculateMarketFee()">
             
             <div class="card" style="background:#fdf1f2; border:1px solid #fbcbd0; font-size:12px; margin: 8px 0; padding:10px;">
-                <div class="row"><span>Comisión de Uso (15%):</span><span id="feeAmountText" style="color:#e95a5a; font-weight:bold;">$0</span></div>
-                <div class="row" style="margin-top:5px; font-size:13px; font-weight:bold;"><span>Líquido Neto a recibir:</span><span id="netAmountText" style="color:#62bd4e;">$0</span></div>
+                <div class="row"><span>Comisión Retiro (15%):</span><span id="feeAmountText" style="color:#e95a5a; font-weight:bold;">$0</span></div>
+                <div class="row" style="margin-top:5px; font-size:13px; font-weight:bold;"><span>Líquido Neto a transferir:</span><span id="netAmountText" style="color:#62bd4e;">$0</span></div>
             </div>
             
             <label>Banco de Destino</label>
@@ -366,7 +364,7 @@
         injectLocalMarker("Cowork Innovación Temuco", [-38.7385, -72.5930], 6000);
     }
 
-    // BUSCADOR LIBRE: CONEXIÓN ABIERTA PARA CONSULTAR CUALQUIER PUNTO DE CHILE
+    // BUSCADOR LIBRE DE CHILE: CONSUME LA API GEOGRÁFICA PARA ENCONTRAR LAS 346 COMUNAS
     async function searchChileCities() {
         const query = document.getElementById('citySearchInput').value;
         const suggestionsBox = document.getElementById('suggestions');
@@ -413,7 +411,7 @@
         
         const mockPlace = {
             id: 'dinamico', name: name, coords: coords, rating: '4.8', details: 'Espacio comercial listo', basePrice: price,
-            reviews: [{ stars: 5, user: "Marta S.", text: "Muy cómodo, excelente iluminación." }]
+            reviews: [{ stars: 5, user: "Marta S.", text: "Muy cómodo, excelente iluminación y conectividad." }]
         };
         
         marker.on('click', () => bindPlaceSelection(mockPlace));
@@ -486,7 +484,7 @@
         document.getElementById('guestCodeBox').textContent = "INV-" + Math.floor(1000 + Math.random() * 9000); 
         document.getElementById('finalCodeIndicator').textContent = bookingID;
         
-        // Cargar QR Real Dinámico usando la API QRServer basada en el código de reserva único
+        // Carga y renderizado nítido del código QR Real
         document.getElementById('realQRCodeImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=ReserveX-Booking-${bookingID}`;
         
         go('reminder'); 
@@ -497,7 +495,7 @@
     function submitReviewData() { if (currentRatingScore === 0) { document.getElementById('ratingValidationError').style.display = 'block'; return; } showAlertModal('Gracias', 'Evaluación enviada.'); go('map'); }
     function toggleRoomAvailability(r, ch) { showAlertModal('Inventario', `Estado de ${r} modificado.`); }
     
-    // CONTROL DEL PRESTADOR: ARREGLADO CON COMISIÓN DE MERCADO DE REFERENCIA DEL 15%
+    // CONTROL DEL PRESTADOR: CÁLCULO CON COMISIÓN FIJADA DEL 15%
     function openWithdrawalModal() { 
         document.getElementById('withdrawAmount').value = '';
         document.getElementById('feeAmountText').textContent = '$0';
@@ -507,7 +505,7 @@
     
     function calculateMarketFee() {
         const amt = parseInt(document.getElementById('withdrawAmount').value) || 0;
-        const fee = Math.round(amt * 0.15); // Comisión real ponderada de mercado (15%)
+        const fee = Math.round(amt * 0.15); // Cargo promedio de mercado (15%)
         const net = amt - fee;
         
         document.getElementById('feeAmountText').textContent = `$${fee.toLocaleString('es-CL')}`;
@@ -525,7 +523,7 @@
         prestadorSaldo -= amt;
         document.getElementById('adminBalanceText').textContent = `$${prestadorSaldo.toLocaleString('es-CL')}`;
         closeModal('withdrawalModal');
-        showAlertModal('Retiro Exitoso', `Transacción liquidada.\n\nMonto Solicitado: $${amt.toLocaleString('es-CL')}\nComisión por espacio (15%): -$${fee.toLocaleString('es-CL')}\nMonto Líquido Transferido: $${net.toLocaleString('es-CL')}`);
+        showAlertModal('Retiro Exitoso', `Transacción liquidada.\n\nMonto Bruto: $${amt.toLocaleString('es-CL')}\nComisión Marketplace (15%): -$${fee.toLocaleString('es-CL')}\nMonto Líquido Transferido: $${net.toLocaleString('es-CL')}`);
     }
 
     function showAlertModal(title, msg) { document.getElementById('modalTitle').textContent = title; document.getElementById('modalText').textContent = msg; document.getElementById('infoModal').classList.add('show'); }
