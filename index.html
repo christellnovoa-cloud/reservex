@@ -43,10 +43,6 @@
         textarea { min-height: 80px; resize: none; }
         label { font-size: 13px; font-weight: 800; color: #445b6e; margin-top: 6px; display: block; }
         
-        .nav { position: absolute; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e2ecf4; display: flex; justify-content: space-around; padding: 10px 6px; z-index: 10; }
-        .nav button { border: 0; background: transparent; color: #6b7e8d; font-weight: 800; font-size: 11px; cursor: pointer; }
-        .nav button.active { color: #1677bd; }
-        
         /* Buscador Avanzado de Comunas de Chile */
         .search-container { position: relative; width: 100%; margin-bottom: 8px; z-index: 999; }
         .suggestions-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #1677bd; border-radius: 14px; max-height: 200px; overflow-y: auto; display: none; box-shadow: 0 8px 24px #0002; z-index: 9999; }
@@ -76,7 +72,6 @@
         .modal.show { display: flex; }
         .modalbox { background: white; border-radius: 26px; padding: 22px; width: 100%; box-shadow: 0 16px 60px #0004; max-height: 85%; overflow-y: auto; }
         
-        /* Contenedor del QR Real Validado Nítido */
         .qrbox { background: #fff; border: 2px dashed #62bd4e; border-radius: 22px; padding: 15px; margin: 15px auto; text-align: center; width: 200px; height: 200px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px #0001; }
         .qrbox img { width: 170px; height: 170px; display: block; object-fit: contain; }
         
@@ -94,6 +89,11 @@
 
         .webpay-header { background: #e20613; color: white; padding: 10px; border-radius: 12px 12px 0 0; font-weight: bold; text-align: center; font-size: 14px; }
         .webpay-box { border: 2px solid #e20613; border-radius: 14px; padding: 12px; background: #fff; margin-top: 10px; }
+        
+        /* Contenedores de previsualización de imágenes subidas */
+        .preview-gallery { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+        .preview-img-box { width: 75px; height: 75px; border-radius: 10px; overflow: hidden; border: 1px solid #dceaf4; background: #eee; }
+        .preview-img-box img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -171,7 +171,11 @@
         <button class="btn alt" onclick="go('rooms')">← Volver</button>
         <h2 id="roomTitle">Sala</h2>
         <div class="summary"><div class="row"><span id="roomRating">★ 4.8</span><strong id="roomPrice">$6.000/h</strong></div></div>
-        <div class="timegrid">
+        
+        <label>Selecciona el día de tu reserva</label>
+        <input type="date" id="bookingDateInput" onchange="updateBookingDateLabel()">
+        
+        <div class="timegrid" style="margin-top: 15px;">
             <div class="time disabled">09:00</div><div class="time" onclick="selectTime(this)">10:00</div>
             <div class="time" onclick="selectTime(this)">11:00</div><div class="time on" onclick="selectTime(this)">15:00</div>
         </div>
@@ -278,8 +282,15 @@
             <span onclick="setRatingScore(1)">★</span><span onclick="setRatingScore(2)">★</span><span onclick="setRatingScore(3)">★</span><span onclick="setRatingScore(4)">★</span><span onclick="setRatingScore(5)">★</span>
         </div>
         <p class="small" style="text-align:center; color:#e95a5a; font-weight:bold; display:none;" id="ratingValidationError">¡Debes seleccionar estrellas para enviar!</p>
-        <textarea id="reviewComment" placeholder="Comentario (Opcional)"></textarea>
-        <button class="btn green" onclick="submitReviewData()">Publicar Evaluación</button>
+        
+        <label>Comentario o recomendación</label>
+        <textarea id="reviewComment" placeholder="Cuéntanos qué tal la limpieza, internet o comodidad..."></textarea>
+        
+        <label>📸 Adjuntar fotos del espacio (Opcional)</label>
+        <input type="file" accept="image/*" multiple onchange="previewImages(event, 'userReviewGallery')">
+        <div id="userReviewGallery" class="preview-gallery"></div>
+        
+        <button class="btn green" style="margin-top: 15px;" onclick="submitReviewData()">Publicar Evaluación</button>
     </section>
 
     <section id="adminPanel" class="screen">
@@ -299,7 +310,14 @@
 
         <button class="btn green" style="margin-bottom:15px;" onclick="openWithdrawalModal()">💰 Retirar Ingresos a mi Banco</button>
 
-        <label>Mis Espacios Ofrecidos</label>
+        <div class="card" style="background: white; border: 1px solid #dceaf4;">
+            <h3>📸 Galería Comercial del Prestador</h3>
+            <p class="small">Sube y gestiona las fotos oficiales que verán tus clientes al buscar tus salas.</p>
+            <input type="file" accept="image/*" multiple onchange="previewImages(event, 'providerGalleryPreview')">
+            <div id="providerGalleryPreview" class="preview-gallery"></div>
+        </div>
+
+        <label style="margin-top: 10px; display: block;">Mis Espacios Ofrecidos</label>
         <div class="card" style="background: white;"><div class="row"><div><h3>Sala de Reuniones</h3><p class="small">Base: $12.000/h</p></div><label class="switch"><input type="checkbox" checked onchange="toggleRoomAvailability('Sala Ejecutiva', this.checked)"><span class="slider"></span></label></div></div>
         
         <nav class="nav">
@@ -360,11 +378,18 @@
             splash.style.opacity = '0'; 
             setTimeout(() => splash.style.display = 'none', 600); 
         }, 1000); 
+        
+        // Inicializar por defecto la fecha mínima de reserva para el día de hoy
+        const todayStr = new Date().toISOString().split('T')[0];
+        const dateInput = document.getElementById('bookingDateInput');
+        if(dateInput) {
+            dateInput.value = todayStr;
+            dateInput.min = todayStr;
+        }
     });
 
     function goHome() { go('roleSelection'); }
     
-    // NAVEGACIÓN Y PREVENCIÓN DE CONGELAMIENTO EN PANTALLA MAPA
     function go(id) { 
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
         const t = document.getElementById(id); 
@@ -494,29 +519,49 @@
         document.getElementById('extraTotalText').textContent = `$${total.toLocaleString('es-CL')}`; 
     }
 
+    function updateBookingDateLabel() {
+        // Almacena y procesa visualmente la fecha si se requiere en los desgloses
+        console.log("Fecha seleccionada:", document.getElementById('bookingDateInput').value);
+    }
+
     function confirmTerms() { 
         if (!document.getElementById('acceptTerms').checked) { showAlertModal('Aviso', 'Debes aceptar las condiciones comerciales.'); return; } 
         document.getElementById('payPlace').textContent = selectedPlaceObj.name; 
         document.getElementById('payRoom').textContent = selectedRoomObj.name; 
         let totalExtras = 0; for (let k in selectedExtras) totalExtras += selectedExtras[k] * preciosExtras[k]; 
         const grandTotal = selectedRoomObj.price + totalExtras; 
-        document.getElementById('payBreakdown').textContent = `Sala: $${selectedRoomObj.price.toLocaleString('es-CL')} + Extras: $${totalExtras.toLocaleString('es-CL')}`; 
+        
+        const fechaElegida = document.getElementById('bookingDateInput').value || "Día seleccionado";
+        document.getElementById('payBreakdown').textContent = `Día: ${fechaElegida} | Base: $${selectedRoomObj.price.toLocaleString('es-CL')} + Extras: $${totalExtras.toLocaleString('es-CL')}`; 
         document.getElementById('payPrice').textContent = `$${grandTotal.toLocaleString('es-CL')}`; 
         go('payment'); 
     }
 
-    // FLUJO CORREGIDO: SE SALTA LA PANTALLA EMBROLLADA Y ABRE EL PASE QR DIRECTO
     function processPayment() { 
         const bookingID = "RX-" + Math.floor(1000 + Math.random() * 9000);
         document.getElementById('guestCodeBox').textContent = "INV-" + Math.floor(1000 + Math.random() * 9000); 
         document.getElementById('finalCodeIndicator').textContent = bookingID;
         document.getElementById('realQRCodeImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=ReserveX-Booking-${bookingID}`;
-        go('code'); // Te envía directo a la pantalla con el QR y los botones de guardado
+        go('code'); 
     }
 
-    function openReviewFlow(name) { document.getElementById('reviewTargetName').textContent = name; currentRatingScore = 0; document.querySelectorAll('#starsContainer span').forEach(s => s.classList.remove('on')); go('review'); }
+    function openReviewFlow(name) { 
+        document.getElementById('reviewTargetName').textContent = name; 
+        currentRatingScore = 0; 
+        document.querySelectorAll('#starsContainer span').forEach(s => s.classList.remove('on')); 
+        document.getElementById('reviewComment').value = '';
+        document.getElementById('userReviewGallery').innerHTML = '';
+        go('review'); 
+    }
+
     function setRatingScore(score) { currentRatingScore = score; document.getElementById('ratingValidationError').style.display = 'none'; document.querySelectorAll('#starsContainer span').forEach((s, idx) => s.classList.toggle('on', idx < score)); }
-    function submitReviewData() { if (currentRatingScore === 0) { document.getElementById('ratingValidationError').style.display = 'block'; return; } showAlertModal('Gracias', 'Evaluación enviada.'); go('map'); }
+    
+    function submitReviewData() { 
+        if (currentRatingScore === 0) { document.getElementById('ratingValidationError').style.display = 'block'; return; } 
+        showAlertModal('Gracias', 'Evaluación y archivos multimedia publicados exitosamente en el historial del local.'); 
+        go('map'); 
+    }
+
     function toggleRoomAvailability(r, ch) { showAlertModal('Inventario', `Estado de ${r} modificado.`); }
     
     function openWithdrawalModal() { 
@@ -528,9 +573,8 @@
     
     function calculateMarketFee() {
         const amt = parseInt(document.getElementById('withdrawAmount').value) || 0;
-        const fee = Math.round(amt * 0.15); // Cargo real de mercado del 15%
+        const fee = Math.round(amt * 0.15); // Cargo del 15% del mercado
         const net = amt - fee;
-        
         document.getElementById('feeAmountText').textContent = `$${fee.toLocaleString('es-CL')}`;
         document.getElementById('netAmountText').textContent = `$${net.toLocaleString('es-CL')}`;
     }
@@ -547,6 +591,28 @@
         document.getElementById('adminBalanceText').textContent = `$${prestadorSaldo.toLocaleString('es-CL')}`;
         closeModal('withdrawalModal');
         showAlertModal('Retiro Exitoso', `Transacción liquidada.\n\nMonto Bruto: $${amt.toLocaleString('es-CL')}\nComisión Marketplace (15%): -$${fee.toLocaleString('es-CL')}\nMonto Líquido Transferido: $${net.toLocaleString('es-CL')}`);
+    }
+
+    // Lógica visual simulada de procesamiento y renderizado de fotos subidas
+    function previewImages(event, targetContainerId) {
+        const container = document.getElementById(targetContainerId);
+        container.innerHTML = '';
+        const files = event.target.files;
+        
+        if (files) {
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const box = document.createElement('div');
+                    box.className = 'preview-img-box';
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    box.appendChild(img);
+                    container.appendChild(box);
+                }
+                reader.readAsDataURL(file);
+            });
+        }
     }
 
     function simulateExport(platform) { showAlertModal('Integración Móvil', `La reserva de tu sala ha sido exportada correctamente a tu cuenta de ${platform}.`); }
